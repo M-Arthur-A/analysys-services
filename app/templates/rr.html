@@ -1,0 +1,41 @@
+<div>
+
+  <h1>Работа с РОСРЕЕСТРом</h1>
+  <div class="content">
+    <h2 style="margin: 0px;">Блок создания запроса</h2>
+    <div class="info">
+      <h3>Справка</h3>
+      <p>Прикрепите ниже .xlsx-файл без заголовка с 3 колонками:</p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;- идентификатор (без спецзнаков и пробелов);</p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;- кадастровый номер;</p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;- тип выписки: simple или history</p>
+  </div>
+    <form action="/rr/upload" method="post" enctype="multipart/form-data">
+      <input type=file name=file>
+      <input type=submit value="создать запрос">
+    </form>
+    <hr>
+    <h2>Блок введения команд</h2>
+    <div class="info">
+      <h3>Справка</h3>
+      <p>Отправьте ключ:</p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;- q сделать заказ из загруженного файла;</p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;- d проверить статус;</p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;- t получить результат;</p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;- r перезаказать неготовые или неполучившиеся выписки;</p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;- s прибраться за собой и удалить файлы проекта с сервера;</p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;- f искать по адресу или кадастру;</p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;- f искать по адресу или кадастру;</p>
+      <p>и (через пробел) идентификатор</p>
+      <hr style="margin: 0px;">
+      <p>К примеру: d project_name</p>
+      <p>Для поиска: f 54:35:061735:*</p>
+      <p>Или: d г Иваново, Конспиративный пер, д 14</p>
+    </div>
+      <form method=post action="/rr/answer">
+        <input type="text" name="text">
+        <input type=submit value="отправить запрос">
+      </form>
+  </div>
+
+</div>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Сокол.Капитал</title>
+    <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
+</head>
+
+<body>
+ <div class="topnav">
+  <img href="index.html" style="float: left; margin-left: 15px; margin-right: 15px;" width="50" src="{{ url_for('static', path='logo.svg') }}" />
+  <a class="active" href="#rr">Росреестр</a>
+  <a href="#fr">Федресурс</a>
+  <a href="#flight">Перелеты</a>
+  <a href="#london">Недвижимость Лондона</a>
+  <a href="https://t.me/sokol_hunt_bot">Ссылка на Telegram</a>
+  <button style="float: right;" onclick="document.getElementById('id01').style.display='block'">Войти</button>
+</div>
+
+<!-- The Modal -->
+<div id="id01" class="modal">
+  <!-- Modal Content -->
+  <form class="modal-content animate" action="/action_page.php">
+    <div class="login-container">
+      <label for="uname"><b>Username</b></label>
+      <input type="text" placeholder="Enter Username" name="uname" required>
+      <label for="psw"><b>Password</b></label>
+      <input type="password" placeholder="Enter Password" name="psw" required>
+      <button type="submit">Login</button>
+    </div>
+  </form>
+</div>
+
+{% include page %}
+
+ <script>
+// Get the modal
+var modal = document.getElementById('id01');
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+</script>
+</body>
+</html>
