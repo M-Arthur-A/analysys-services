@@ -2,47 +2,114 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Сокол.Капитал</title>
+    <title>{{ SITE_NAME }}</title>
     <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
 </head>
-
+{% if top_panel is not none %}
+    {% include top_panel if top_panel %}
+{% else %}
+{% endif %}
 <body>
- <div class="topnav">
-  <img href="index.html" style="float: left; margin-left: 15px; margin-right: 15px;" width="50" src="{{ url_for('static', path='logo.svg') }}" />
-  <a class="active" href="#rr">Росреестр</a>
-  <a href="#fr">Федресурс</a>
-  <a href="#flight">Перелеты</a>
-  <a href="#london">Недвижимость Лондона</a>
-  <a href="https://t.me/sokol_hunt_bot">Ссылка на Telegram</a>
-  <button style="float: right;" onclick="document.getElementById('id01').style.display='block'">Войти</button>
-</div>
-
-<!-- The Modal -->
-<div id="id01" class="modal">
-  <!-- Modal Content -->
-  <form class="modal-content animate" action="/action_page.php">
-    <div class="login-container">
-      <label for="uname"><b>Username</b></label>
-      <input type="text" placeholder="Enter Username" name="uname" required>
-      <label for="psw"><b>Password</b></label>
-      <input type="password" placeholder="Enter Password" name="psw" required>
-      <button type="submit">Login</button>
-    </div>
-  </form>
-</div>
 
 {% include page %}
 
+<!-- Modal registration block -->
+<div id="id01" class="modal">
+  <div class="modal-content animate info" style="width: 350px; height: 200px;">
+    <div class="login-container">
+        <div>
+            <label for="username"><b>Логин</b></label>
+            <input id="reg_uname" style="margin-left:12px;" type="text" placeholder="Придумайте логин" name="username" required>
+        </div>
+        <div>
+            <label for="password"><b>Пароль</b></label>
+            <input id="reg_psw" type="password" placeholder="Придумайте пароль" name="password" required>
+        </div>
+      <span id="reg_wrong_credentials"</span>
+      <div style="text-align: center;">
+        <button onclick="registerUser()">Зарегистрироваться</button>
+      </div>
+    </div>
+  </div>
+</div>
  <script>
-// Get the modal
-var modal = document.getElementById('id01');
+    // Get the modal
+  var modal = document.getElementById('id01');
 
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function(event) {
+      if (event.target == modal) {
+          modal.style.display = "none";
+      }
+  }
+  // document.querySelector('[type=submit]').addEventListener('click', registerUser);
+
+    async function registerUser() {
+        const url = "http://localhost:8000/auth/register";
+        const wrongCredentialsSpan = document.getElementById("reg_wrong_credentials");
+        const formData = new FormData();
+        formData.append('username', document.getElementById("reg_uname").value);
+        formData.append('password', document.getElementById("reg_psw").value);
+
+        await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: formData,
+        }).then(response => {
+            if (response.status === 201) {
+                window.location.href = "/"
+            } else {
+                wrongCredentialsSpan.textContent = "Неверный логин или пароль";
+            }
+        });
     }
-}
-</script>
+
+    async function loginUser() {
+        const wrongCredentialsSpan = document.getElementById("wrong_credentials");
+        wrongCredentialsSpan.textContent = "";
+
+        const url = "http://localhost:8000/auth/login";
+        const username = document.getElementById("login_uname").value;
+        const password = document.getElementById("login_psw").value;
+
+        await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({username: username, password: password}),
+        }).then(response => {
+            if (response.status === 200) {
+                window.location.href = "/rr"
+            } else {
+                wrongCredentialsSpan.textContent = "Что-то пошло не так";
+            }
+        });
+    }
+
+    async function rrDownload(query_id, query_name) {
+        const url = "http://localhost:8000/rr/download";
+        await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({query_id: query_id, query_name: query_name}),
+        }).then(response => {});
+    }
+
+    async function rrReorder(query_id) {
+        const url = "http://localhost:8000/rr/reorder";
+        await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({query_id: query_id}),
+        }).then(response => {});
+    }
+ </script>
 </body>
 </html>

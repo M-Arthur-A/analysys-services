@@ -1,41 +1,84 @@
 <div>
-
   <h1>Работа с РОСРЕЕСТРом</h1>
-  <div class="content">
-    <h2 style="margin: 0px;">Блок создания запроса</h2>
-    <div class="info">
-      <h3>Справка</h3>
-      <p>Прикрепите ниже .xlsx-файл без заголовка с 3 колонками:</p>
-      <p>&nbsp;&nbsp;&nbsp;&nbsp;- идентификатор (без спецзнаков и пробелов);</p>
-      <p>&nbsp;&nbsp;&nbsp;&nbsp;- кадастровый номер;</p>
-      <p>&nbsp;&nbsp;&nbsp;&nbsp;- тип выписки: simple или history</p>
-  </div>
-    <form action="/rr/upload" method="post" enctype="multipart/form-data">
-      <input type=file name=file>
-      <input type=submit value="создать запрос">
-    </form>
-    <hr>
-    <h2>Блок введения команд</h2>
-    <div class="info">
-      <h3>Справка</h3>
-      <p>Отправьте ключ:</p>
-      <p>&nbsp;&nbsp;&nbsp;&nbsp;- q сделать заказ из загруженного файла;</p>
-      <p>&nbsp;&nbsp;&nbsp;&nbsp;- d проверить статус;</p>
-      <p>&nbsp;&nbsp;&nbsp;&nbsp;- t получить результат;</p>
-      <p>&nbsp;&nbsp;&nbsp;&nbsp;- r перезаказать неготовые или неполучившиеся выписки;</p>
-      <p>&nbsp;&nbsp;&nbsp;&nbsp;- s прибраться за собой и удалить файлы проекта с сервера;</p>
-      <p>&nbsp;&nbsp;&nbsp;&nbsp;- f искать по адресу или кадастру;</p>
-      <p>&nbsp;&nbsp;&nbsp;&nbsp;- f искать по адресу или кадастру;</p>
-      <p>и (через пробел) идентификатор</p>
-      <hr style="margin: 0px;">
-      <p>К примеру: d project_name</p>
-      <p>Для поиска: f 54:35:061735:*</p>
-      <p>Или: d г Иваново, Конспиративный пер, д 14</p>
+  <div class="content" style="width: 600px;">
+    <div class="tabs">
+      <div class="tab">
+        <input type="checkbox" id="chck1">
+        <label class="tab-label" for="chck1">Разместить заказ</label>
+        <div class="tab-content">
+          <div class="info">
+            <h2>Заказ файлом</h2>
+            <p>Прикрепите .xlsx-файл без заголовка с 3 колонками:</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;- идентификатор;</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;- кадастровый номер;</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;- тип выписки: simple или history</p>
+            <form action="/rr/upload" method="post" enctype="multipart/form-data">
+              <input type=file name=file>
+              <input type=submit value="создать запрос">
+            </form>
+          </div>
+          <hr>
+          <div class="info">
+            <h2>Заказ текстом</h2>
+            <p>Укажите кадастровый номер с типом выписки: s (simple) или h (history)</p>
+            <p>Например:</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;s54:35:061735:130</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;s54:35:061735:131</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;h54:35:061735:130</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;h54:35:061735:131</p>
+            <form method=post action="/rr/query">
+              <textarea type="text" name="text" style="height: 100px; width: 510px; margin: 10px 0px 10px 0px;"></textarea>
+              <input type=submit value="отправить запрос">
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="tab">
+        <input type="checkbox" id="chck2">
+        <label class="tab-label" for="chck2">Поиск недвижимости</label>
+        <div class="tab-content">
+          <div class="info">
+            <h2>Поиск по адресу или кадастровому номеру</h2>
+            <p>Например:</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;54:35:061735:*</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;г Иваново, Конспиративный пер, д 14</p>
+            <form method=post action="/rr/search">
+              <input type="text" name="text" style="width: 510px; margin: 10px 0px 10px 0px;">
+              <input type=submit value="отправить запрос">
+            </form>
+          </div>
+        </div>
+      </div>
+      {% for query in queries %}
+      <div class="tab">
+        <input type="checkbox" id="{{query.id}}">
+        <label class="tab-label" for="{{query.id}}">{{query.name}}</label>
+        <div class="tab-content">
+          <input value="скачать" type="button" onClick="rrDownload({{ query.id }},'{{ query.name }}')" />
+          <input value="перезаказать" type="button" onClick="rrReorder({{ query.id }})" />
+          <table>
+            <thead>
+              <tr>
+                <th>Кадастр</th>
+                <th>Тип</th>
+                <th>Дата</th>
+                <th>Статус</th>
+              </tr>
+            <thead>
+            <tbody>
+              {% for order in query.orders %}
+              <tr>
+                <td>{{ order.cadastral }}</td>
+                <td>{{ order.cadastral_type }}</td>
+                <td>{{ order.created_at }}</td>
+                <td>{{ order.status }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {% endfor %}
     </div>
-      <form method=post action="/rr/answer">
-        <input type="text" name="text">
-        <input type=submit value="отправить запрос">
-      </form>
   </div>
-
 </div>

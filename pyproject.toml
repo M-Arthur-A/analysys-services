@@ -11,6 +11,12 @@ python = "^3.11"
 fastapi = {extras = ["all"], version = "^0.103.2"}
 pyright = "^1.1.329"
 python-multipart = "^0.0.6"
+python-jose = "^3.3.0"
+sqlalchemy = "^2.0.21"
+fastapi-cache = "^0.1.0"
+fastapi-cache2 = "^0.2.1"
+asyncpg = "^0.28.0"
+passlib = "^1.7.4"
 
 
 [build-system]
