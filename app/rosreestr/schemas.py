@@ -6,6 +6,7 @@ class SOrder(BaseModel):
     cadastral:      int
     cadastral_type: str
     status:         str
+    detail:         str
     created_at:     date
 
 
@@ -23,3 +24,8 @@ class SReorder(BaseModel):
 class SDownload(BaseModel):
     query_id:   int
     query_name: str
+
+class SQuery(BaseModel):
+    project: str
+    query_s: str
+    query_h: str

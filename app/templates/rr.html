@@ -7,6 +7,30 @@
         <label class="tab-label" for="chck1">Разместить заказ</label>
         <div class="tab-content">
           <div class="info">
+            <h2>Заказ текстом</h2>
+            <div style="margin-bottom: 20px;">
+              <label>Проект:</label>
+              <input type="text" id="prj_name" placeholder="опционально (если не задать, присвоится автоматически)" style="height: 10px; width: 448px; margin: 10px 0px 10px 0px;">
+            </div>
+            <div style="display: flex;">
+              <div style="text-align: center;">
+                <div>
+                  <label>Простые выписки:</label>
+                </div>
+                <textarea type="text" id="query_s" placeholder="кадастровые номера через <enter>" style="resize: none; height: 100px; width: 245px; margin: 5px 5px 10px 0px;"></textarea>
+              </div>
+              <div style="text-align: center;">
+                <div>
+                  <label>Исторические выписки:</label>
+                </div>
+                <textarea type="text" id="query_h" placeholder="кадастровые номера через <enter>" style="resize: none; height: 100px; width: 245px; margin: 5px 0px 10px 0px;"></textarea>
+              </div>
+            </div>
+            <Button onclick="query()">отправить запрос</Button>
+          </div>
+
+          <hr hidden>
+          <div class="info" hidden>
             <h2>Заказ файлом</h2>
             <p>Прикрепите .xlsx-файл без заголовка с 3 колонками:</p>
             <p>&nbsp;&nbsp;&nbsp;&nbsp;- идентификатор;</p>
@@ -15,20 +39,6 @@
             <form action="/rr/upload" method="post" enctype="multipart/form-data">
               <input type=file name=file>
               <input type=submit value="создать запрос">
-            </form>
-          </div>
-          <hr>
-          <div class="info">
-            <h2>Заказ текстом</h2>
-            <p>Укажите кадастровый номер с типом выписки: s (simple) или h (history)</p>
-            <p>Например:</p>
-            <p>&nbsp;&nbsp;&nbsp;&nbsp;s54:35:061735:130</p>
-            <p>&nbsp;&nbsp;&nbsp;&nbsp;s54:35:061735:131</p>
-            <p>&nbsp;&nbsp;&nbsp;&nbsp;h54:35:061735:130</p>
-            <p>&nbsp;&nbsp;&nbsp;&nbsp;h54:35:061735:131</p>
-            <form method=post action="/rr/query">
-              <textarea type="text" name="text" style="height: 100px; width: 510px; margin: 10px 0px 10px 0px;"></textarea>
-              <input type=submit value="отправить запрос">
             </form>
           </div>
         </div>
@@ -71,7 +81,7 @@
                 <td>{{ order.cadastral }}</td>
                 <td>{{ order.cadastral_type }}</td>
                 <td>{{ order.created_at }}</td>
-                <td>{{ order.status }}</td>
+                <td><span title="{{ order.detail }}">{{ order.status }}</span></td>
               </tr>
               {% endfor %}
             </tbody>

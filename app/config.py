@@ -1,5 +1,9 @@
 from typing import Literal
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from loguru import logger
+
+
+# logger.add("LOG_{time}.log", level="DEBUG", rotation="100 MB")
 
 
 class Settings(BaseSettings):
@@ -48,6 +52,13 @@ class Settings(BaseSettings):
     TG_BOT:     str
     TG_CHANNEL: str
 
+    RR_API_LIB_PATH:    str
+    TEST_RR_KR_API_KEY: str
+    TEST_RR_KR_ORG_ID:  str
+    RR_KR_API_KEY:      str
+    RR_KR_ORG_ID:       str
+
     model_config = SettingsConfigDict(env_file=".env", extra='ignore')
+
 
 settings = Settings()

@@ -1,6 +1,6 @@
 body {
   font-family: Monaco, Helvetica, sans-serif;
-  background: linear-gradient(45deg, #ffffff, #eee);
+  /* background: linear-gradient(45deg, #ffffff, #eee); */
 }
 h1 {
   text-align: center;
@@ -100,11 +100,10 @@ hr {
 
  /* Add a black background color to the top navigation */
 .topnav {
-    background-color: #eee;
+    /* background-color: #eee; */
+    background: linear-gradient(45deg, #eee, #ffffff);
     overflow: hidden;
-    border: 2px dotted #eee;
     border-radius: 15px;
-  /* position: fixed; */
 }
 
 /* Style the links inside the navigation bar */

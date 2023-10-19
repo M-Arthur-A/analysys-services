@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>{{ SITE_NAME }}</title>
     <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', path='/favicon.svg') }}" rel="shortcut icon" type="image/svg"/>
 </head>
 {% if top_panel is not none %}
     {% include top_panel if top_panel %}
@@ -110,6 +111,26 @@
             body: JSON.stringify({query_id: query_id}),
         }).then(response => {});
     }
+
+    async function query() {
+        const url = "http://localhost:8000/rr/query";
+        const project = document.getElementById("prj_name").value;
+        const q_simple = document.getElementById("query_s").value;
+        const q_history = document.getElementById("query_h").value;
+
+        await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({project: project, query_s: q_simple, query_h: q_history}),
+        }).then(response => {
+            if (response.status === 200) {
+                window.location.href = "/rr"
+            } else {}
+        });
+    }
+
  </script>
 </body>
 </html>
