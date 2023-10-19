@@ -26,6 +26,6 @@ class SDownload(BaseModel):
     query_name: str
 
 class SQuery(BaseModel):
-    project: str
-    query_s: str
-    query_h: str
+    project: str | None
+    query_s: str | None
+    query_h: str | None
