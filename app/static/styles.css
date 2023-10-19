@@ -146,7 +146,6 @@ hr {
     background-color: #fefefe;
     margin: 15px 15px;
     width: 44%; /* Could be more or less, depending on screen size */
-    border: 2px otted #eee;
     border-radius: 15px;
     float: right;
 }
@@ -154,7 +153,6 @@ hr {
 /* Modal login Container */
 .login-container {
   display: inline;
-  margin: 15px 15px 15px 15px
   padding: 15px 15px 15px 15px
  }
 /* Add Zoom Animation */
