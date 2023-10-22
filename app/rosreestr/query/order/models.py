@@ -11,7 +11,7 @@ class Orders(Base):
 
     id:             Mapped[str] = mapped_column(primary_key=True)
     query_id:       Mapped[int] = mapped_column(ForeignKey("rr_queries.id"))
-    session_id:     Mapped[str] = mapped_column(nullable=False)
+    session_id:     Mapped[str] = mapped_column(nullable=True)
     cadastral:      Mapped[str] = mapped_column(nullable=False)
     cadastral_type: Mapped[str] = mapped_column(nullable=False)
     status:         Mapped[str] = mapped_column(nullable=True)

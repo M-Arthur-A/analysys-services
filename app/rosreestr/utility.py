@@ -2,6 +2,7 @@ from datetime import datetime
 from glob import glob as gb
 from zipfile import ZipFile
 import asyncio
+import json
 import sys
 import os
 import re
@@ -71,12 +72,11 @@ class Utility:
 
 
     @classmethod
-    async def check_orders(cls, query_id: int):
+    async def check_orders(cls):
         """
         for celery
         """
-        orders = await OrdersDAO.find_all(query_id=query_id)
-        project = await QuariesDAO.get_name(query_id=query_id)
+        orders = await OrdersDAO.get_all_unready()
         for order in orders:
             result = await cls.session.check(order.id)
             await OrdersDAO.modify(
@@ -87,19 +87,18 @@ class Utility:
                 )
 
             if result['new_status'] == 'processed':
+                project = await QuariesDAO.get_name(query_id=order.query_id)
                 await cls.session.download(project=query_id,
-                                          file_data=result['file_data'])
-                df_res = cls.parse_one(data=result['file_data'],
-                                       project=project,
-                                       cadastral=order.cadastral,
-                                       cadastral_type=order.cadastral_type,
-                                       )
+                                           file_data=result['file_data'])
+                cls._xls_converter(
+                    data=result['file_data'],
+                    project=project,
+                    cadastral=order.cadastral,
+                    cadastral_type=order.cadastral_type,
+                )
 
-                name = f'{"-".join(cadastral.split(":"))}_{session.o_type}.xlsx'
-                file_name = session.file_name + '/' + name
-                df_res.to_excel(file_name)
 
-    def parse_one(self,
+    def _xls_converter(self,
               data:           dict,
               project:        str,
               cadastral:      str,
@@ -158,20 +157,12 @@ class Utility:
             logger.error(f"rr.utility::{project}_{cadastral}_{cadastral_type} распарсить не получилось!")
 
     @classmethod
-    def zipping(cls, project:str):
-        # zip_result = ZipFile(f'{path_temp}{suffix}.zip', 'w', ZIP_DEFLATED, compresslevel=9)
-        # pdf_files = gb(paths + '*.pdf')
-        # for pdf_file in pdf_files:
-        #     zip_result.write(pdf_file, pdf_file.split('/')[-1])
-        # zip_result.write(f'{path_downloaded}{suffix}.xlsx', suffix + '.xlsx')
-        # zip_result.close()
+    def _zipping(cls, project:str):
         paths = f'{cls.session.dir_path}{project}/'
         zip_files = gb(paths + '*.zip')
         for zip_file in zip_files:
             folder = '/'.join(zip_file.split('/')[:-1]) + '/'
             name = zip_file.split('/')[-1][:-4] + '.pdf'
-            # pdf_name = folder + name
-            # open zip
             with ZipFile(zip_file, 'r') as zip_ref:
                 zip_ref.extractall(folder)
                 old_name = zip_ref.namelist()[0]
@@ -186,9 +177,8 @@ class Utility:
         zip_result.close()
 
 
-
     @classmethod
-    def analyze(cls, project):
+    def _analyze(cls, project):
         def clear_owner_col(col_name):
             return re.sub(r"_\d+_", '_', col_name.replace('rightMovements_', ''))
 
@@ -198,44 +188,9 @@ class Utility:
             return lst
 
         def rus_localizaton(col):
-            ru_dict = {
-                    'cadastral': 'Кадастровый номер',
-                    'addressNotes': 'Адрес',
-                    'estateType': 'Тип',
-                    'area_value': 'Площадь',
-                    'area_unit': 'Единица площади',
-                    'owners_name': 'Правообладатель',
-                    'owners_ownershipType': 'Тип права',
-                    'owners_regNumber': 'Рег.номер права',
-                    'owners_regStartDate': 'Дата регистрации права',
-                    'owners_regEndDate': 'Дата прекращения права',
-                    'owners_inn': 'ИНН правообладателя',
-                    'owners_share': 'Доля в праве',
-                    'owners_share_denominator': 'toDel1',
-                    'owners_share_numerator': 'toDel2',
-                    'id': 'toDel3',
-                    'id_x': 'toDel4',
-                    'id_y': 'toDel5',
-                    'createDate': 'Дата постановки на учет',
-                    'category': 'Категория',
-                    'utilization': 'Разрешенное использование',
-                    'estateState': 'Статус объекта',
-                    'cadastralCost_value': 'Кадастровая стоимость',
-                    'cadastralCost_unit': 'Единица кадастровой стоимости',
-                    'embeddedObjects_cadastralNumber': 'Кадастровый номера, расположенные внутри объекта',
-                    'encumbrances_type': 'Тип обременения',
-                    'encumbrances_regDate': 'Дата регистрации обременения',
-                    'encumbrances_regNumber': 'Номер обременения',
-                    'encumbrances_pledge_name': 'Правообладатель обременения',
-                    'encumbrances_pledge_inn': 'ИНН правообладателя обременения',
-                    'encumbrances_document_number': 'Номер договора обременения',
-                    'encumbrances_document_issuerDate': 'Дата (issuerDate) договора обременения',
-                    'encumbrances_document_name': 'Наименование договора обременения',
-                    'encumbrances_document_content': 'Реквизиты договора обременения',
-                    'encumbrances_period': 'Период обременения',
-                    'data_type': 'Тип правообладателя'
-                    }
-            return ru_dict[col] if col in ru_dict.keys() else col
+            with open(f'app/rosreestr/localization.json', encoding='utf8') as file:
+                ru_dict = json.load(file)
+                return ru_dict[col] if col in ru_dict.keys() else col
 
         logger.debug(f'starting to concat excels of <{project}>')
         file_name = f'{cls.session.path_dir}{project}'

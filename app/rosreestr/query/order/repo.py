@@ -32,6 +32,20 @@ class OrdersDAO(BaseDAO):
             return result.all()
 
     @classmethod
+    async def get_all_unready(cls) -> list[Orders]:
+        """
+        select * from rr_orders o
+            where
+                  (o.is_ready is NULL) and
+                  (o.status != 'Error');
+        """
+        query = select(Orders)\
+            .where((Orders.is_ready != None) & (Orders.status != 'Error'))
+        async with async_session_maker() as session:
+            result = await session.execute(query)
+            return result.all()
+
+    @classmethod
     async def modify(cls,
                      order_id:       str,
                      new_status:     str,

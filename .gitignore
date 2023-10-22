@@ -1,0 +1,11 @@
+logo.svg
+favicon.svg
+*.log
+.env
+flask-server.py
+__pycache__
+.ruff_cache
+volumes
+private
+kontur
+app/migrations/versions

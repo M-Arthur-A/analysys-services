@@ -27,3 +27,11 @@ async def test_creating_orders(user_id, prj, q_s, q_h):
     await utility.create_orders_by_txt(query=query, user_id=user_id)
     orders_after = len(await OrdersDAO.get_all_by_user(user_id=user_id))
     assert (orders_after - orders_before) == 2
+
+async def test_checking_orders():
+    # create testing objects with download links
+    # 1. processing
+    # 2. error
+    # 3. processed
+    # 3.1 download file
+    pass
