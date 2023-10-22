@@ -13,7 +13,8 @@ class Users(Base):
     username:        Mapped[str] = mapped_column(nullable=False)
     hashed_password: Mapped[str] = mapped_column(nullable=False)
     tg_id:           Mapped[str] = mapped_column(nullable=True)
-    created_at:      Mapped[datetime] = mapped_column(Date, nullable=False)
+    role:            Mapped[str] = mapped_column(nullable=False)
+    created_at:      Mapped[datetime] = mapped_column(Date, nullable=True)
     activated:       Mapped[bool] = mapped_column(nullable=False)
 
     queries: Mapped[list['Queries']] = relationship(back_populates="user")

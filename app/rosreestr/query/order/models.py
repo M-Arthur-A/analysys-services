@@ -11,7 +11,8 @@ class Orders(Base):
 
     id:             Mapped[str] = mapped_column(primary_key=True)
     query_id:       Mapped[int] = mapped_column(ForeignKey("rr_queries.id"))
-    cadastral:      Mapped[int] = mapped_column(nullable=False)
+    session_id:     Mapped[str] = mapped_column(nullable=False)
+    cadastral:      Mapped[str] = mapped_column(nullable=False)
     cadastral_type: Mapped[str] = mapped_column(nullable=False)
     status:         Mapped[str] = mapped_column(nullable=True)
     status_txt:     Mapped[str] = mapped_column(nullable=True)
@@ -19,7 +20,6 @@ class Orders(Base):
     created_at:     Mapped[datetime] = mapped_column(Date, nullable=False)
     modified_at:    Mapped[datetime] = mapped_column(Date, nullable=False)
 
-    user:  Mapped['Users'] = relationship(back_populates="orders")
     query: Mapped['Queries'] = relationship(back_populates="orders")
 
     def __str__(self):

@@ -1,0 +1,27 @@
+[
+    {
+        "username": "admin",
+        "hashed_password": "hashhash$dsdfsdsdf",
+        "role": "admin",
+        "activated": true
+    },
+    {
+        "username": "user1",
+        "hashed_password": "hashhash$fglkgdk;l",
+        "role": "user",
+        "activated": true
+    },
+    {
+        "username": "user2",
+        "hashed_password": "hashhash$ghotirpry",
+        "tg_id": "@vasiapupkin",
+        "role": "user",
+        "activated": true
+    },
+    {
+        "username": "user3_unknown",
+        "hashed_password": "hashhash$123",
+        "role": "user",
+        "activated": false
+    }
+]

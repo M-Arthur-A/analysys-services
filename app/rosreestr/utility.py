@@ -1,3 +1,4 @@
+from datetime import datetime
 from glob import glob as gb
 from zipfile import ZipFile
 import asyncio
@@ -24,6 +25,7 @@ class Utility:
     else:
         api_key = settings.RR_KR_API_KEY
         org_id  = settings.RR_KR_ORG_ID
+
     session = kr_connector(api_key=api_key,
                            org_id=org_id,
                            logger=logger,
@@ -35,31 +37,32 @@ class Utility:
     async def create_orders_by_txt(cls, query: SQuery, user_id: int):
         project = cls.session.get_project(query.project)
         query_id = await QuariesDAO.add(project=project, user_id=user_id)
-        for orders_s, orders_h in (query.query_s, query.query_h):
-            for order in orders_s.split('\r\n'):
-                result = await cls.session.create(order, 'simple')
-                await OrdersDAO.add(
-                    query_id=query_id,
-                    order_id=result['uid'],
-                    session_id=result['session_id'],
-                    cadastral=order,
-                    cadastral_type='simple',
-                    status=result['status'],
-                    status_txt=result['status_txt'],
-                    created_at=result['created_at'],
-                    )
-            for order in orders_h.split('\r\n'):
-                result = await cls.session.create(order, 'history')
-                await OrdersDAO.add(
-                    query_id=query_id,
-                    order_id=result['uid'],
-                    session_id=result['session_id'],
-                    cadastral=order,
-                    cadastral_type='history',
-                    status=result['status'],
-                    status_txt=result['status_txt'],
-                    created_at=result['created_at'],
-                    )
+        for order in query.query_s.split(r'\r\n') if query.query_s else ():
+            result = await cls.session.create(order, 'simple')
+            await OrdersDAO.add(
+                query_id=query_id,
+                id=result['uid'],
+                session_id=result['session_id'],
+                cadastral=order,
+                cadastral_type='simple',
+                status=result['status'],
+                status_txt=result['status_txt'],
+                created_at=datetime.strptime(result['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ'),
+                modified_at=datetime.strptime(result['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ'),
+                )
+        for order in query.query_h.split(r'\r\n') if query.query_h else ():
+            result = await cls.session.create(order, 'history')
+            await OrdersDAO.add(
+                query_id=query_id,
+                id=result['uid'],
+                session_id=result['session_id'],
+                cadastral=order,
+                cadastral_type='history',
+                status=result['status'],
+                status_txt=result['status_txt'],
+                created_at=datetime.strptime(result['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ'),
+                modified_at=datetime.strptime(result['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ'),
+                )
 
 
     # @classmethod
@@ -72,7 +75,7 @@ class Utility:
         """
         for celery
         """
-        orders = await OrdersDAO.get_all(query_id=query_id)
+        orders = await OrdersDAO.find_all(query_id=query_id)
         project = await QuariesDAO.get_name(query_id=query_id)
         for order in orders:
             result = await cls.session.check(order.id)

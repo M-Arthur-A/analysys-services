@@ -1,12 +1,15 @@
 import pytest
 import asyncio
+import json
 
 from fastapi.testclient import TestClient # httpx
 from httpx import AsyncClient
+from sqlalchemy import insert
 
 from app.main import app as fastapi_app
 from app.config import settings
-from app.database import async_session_maker
+from app.database import Base, async_session_maker, engine
+from app.users.models import Users
 
 
 
@@ -14,6 +17,24 @@ from app.database import async_session_maker
 async def prepare_database():
     assert settings.MODE == "TEST"
 
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(Base.metadata.create_all)
+
+    def open_mock_json(model: str):
+        with open(f'app/tests/mock_{model}.json', encoding='utf8') as file:
+            return json.load(file)
+
+    users = open_mock_json("users")
+
+    async with async_session_maker() as session:
+        for Model, values in [
+                                (Users, users),
+        ]:
+            query = insert(Model).values(values)
+            await session.execute(query)
+
+        await session.commit()
 
 @pytest.fixture(scope="session")
 def event_loop():
