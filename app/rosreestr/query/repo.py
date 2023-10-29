@@ -1,14 +1,18 @@
 from datetime import datetime
 
+from sqlalchemy.orm import joinedload
+from app.rosreestr.query.order.models import Orders
+
 from sqlalchemy import Column, DateTime, insert, select
 from sqlalchemy.sql import func
+from sqlalchemy.orm import lazyload
 
 from app.database import async_session_maker
 from app.repository.repo import BaseDAO
 from app.rosreestr.query.models import Queries
 
 
-class QuariesDAO(BaseDAO):
+class QueriesDAO(BaseDAO):
     model = Queries
 
 
@@ -21,11 +25,22 @@ class QuariesDAO(BaseDAO):
         query = select(Queries.name).filter_by(id=query_id)
         async with async_session_maker() as session:
             result = await session.execute(query)
-            return result.mappings().one_or_none()
+            return result.scalars().one_or_none()
 
     @classmethod
-    async def get_all(cls, user_id: int) -> list[Queries]:
-        return await cls.find_all(user_id=user_id)
+    async def get_all(cls, user_id: int) -> dict:
+        """
+        select * from rr_queries q
+        left join rr_orders o
+        on q.id = o.query_id
+        where q.user_id = 3;
+        """
+        query = select(Queries)\
+            .where(Queries.user_id == user_id)\
+            .options(joinedload(Queries.orders)) # one-to-many
+        async with async_session_maker() as session:
+            result = await session.execute(query)
+            return result.unique().scalars().all()
 
 
     @classmethod
@@ -40,12 +55,3 @@ class QuariesDAO(BaseDAO):
             new_query_id = await session.execute(query)
             await session.commit()
             return new_query_id.scalar_one()
-
-
-    @classmethod
-    async def modify(cls,):
-        ...
-
-    @classmethod
-    async def delete(cls, query_id: int):
-        ...

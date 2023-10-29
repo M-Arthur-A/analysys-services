@@ -47,4 +47,5 @@ def restart_server():
 if __name__ == "__main__":
     # restart_systemctl(['postgresql', 'redis'])
     # restart_celery()
+    restart_systemctl(['postgresql'])
     restart_server()

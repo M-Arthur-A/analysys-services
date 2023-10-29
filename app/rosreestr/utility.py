@@ -1,19 +1,24 @@
 from datetime import datetime
 from glob import glob as gb
 from zipfile import ZipFile
+from icecream import ic
 import asyncio
 import json
 import sys
 import os
 import re
+import warnings
+warnings.filterwarnings('ignore')
 
+from typing import List
 from loguru import logger
 from fastapi import File
 import pandas as pd
 
-from app.rosreestr.query.repo import QuariesDAO
+from app.rosreestr.query.repo import QueriesDAO
 from app.rosreestr.query.order.repo import OrdersDAO
-from app.rosreestr.schemas import SQuery
+from app.rosreestr.query.order.models import Orders
+from app.rosreestr.schemas import SDownload, SQuery
 from app.config import settings
 sys.path.append(settings.RR_API_LIB_PATH)
 from kr import Queries as kr_connector
@@ -37,8 +42,8 @@ class Utility:
     @classmethod
     async def create_orders_by_txt(cls, query: SQuery, user_id: int):
         project = cls.session.get_project(query.project)
-        query_id = await QuariesDAO.add(project=project, user_id=user_id)
-        for order in query.query_s.split(r'\r\n') if query.query_s else ():
+        query_id = await QueriesDAO.add(project=project, user_id=user_id)
+        for order in query.query_s.split('\n') if query.query_s else ():
             result = await cls.session.create(order, 'simple')
             await OrdersDAO.add(
                 query_id=query_id,
@@ -78,27 +83,47 @@ class Utility:
         """
         orders = await OrdersDAO.get_all_unready()
         for order in orders:
-            result = await cls.session.check(order.id)
-            await OrdersDAO.modify(
-                order_id=order.id,
-                new_status=result['new_status'],
-                new_status_txt=result['new_status_txt'],
+            result = await cls.session.check(
+                session_id=order.session_id,
+                cadastral=order.cadastral,
+                o_type=order.cadastral_type,
+            )
+            await OrdersDAO.update(
+                item_id=order.id,
+                status=result['new_status'],
+                status_txt=result['new_status_txt'],
                 modified_at=result['modified_at'],
-                )
+            )
 
-            if result['new_status'] == 'processed':
-                project = await QuariesDAO.get_name(query_id=order.query_id)
-                await cls.session.download(project=query_id,
-                                           file_data=result['file_data'])
+            if result['new_status'] == 'Processed':
+                project = await QueriesDAO.get_name(query_id=order.query_id)
+                await cls.session.download(
+                    project=project,
+                    file_data=result['file']
+                )
                 cls._xls_converter(
-                    data=result['file_data'],
+                    data=result['file'],
                     project=project,
                     cadastral=order.cadastral,
                     cadastral_type=order.cadastral_type,
                 )
+                await OrdersDAO.update(
+                    item_id=order.id,
+                    is_ready=True,
+                )
 
 
-    def _xls_converter(self,
+    @classmethod
+    async def prepare_for_download(cls, query_id: int, query_name: str):
+        query = await QueriesDAO.find_by_id(query_id)
+        if query and query['is_ready']:
+            return
+        cls._analyze(query_name)
+        cls._zipping(query_name)
+
+
+    @classmethod
+    def _xls_converter(cls,
               data:           dict,
               project:        str,
               cadastral:      str,
@@ -150,14 +175,15 @@ class Utility:
             logger.info(f"rr.utility::{project}_{cadastral}_{cadastral_type} распарсен")
 
             name = f'{"-".join(cadastral.split(":"))}_{cadastral_type}.xlsx'
-            file_name = self.session.path_dir + f'{project}/' + name
+            file_name = f'{cls.session.dir_path}{project}/{name}'
             df[cols_to_save].to_excel(file_name)
             logger.info(f"rr.utility::{project}_{cadastral}_{cadastral_type} сохранен")
-        except:
-            logger.error(f"rr.utility::{project}_{cadastral}_{cadastral_type} распарсить не получилось!")
+        except Exception as e:
+            logger.error(f"rr.utility::{project}_{cadastral}_{cadastral_type} распарсить / сохранить не получилось!")
+            print(e)
 
     @classmethod
-    def _zipping(cls, project:str):
+    def _zipping(cls, project: str):
         paths = f'{cls.session.dir_path}{project}/'
         zip_files = gb(paths + '*.zip')
         for zip_file in zip_files:
@@ -193,7 +219,7 @@ class Utility:
                 return ru_dict[col] if col in ru_dict.keys() else col
 
         logger.debug(f'starting to concat excels of <{project}>')
-        file_name = f'{cls.session.path_dir}{project}'
+        file_name = f'{cls.session.dir_path}{project}'
         d_files = gb(f'{file_name}/*.xlsx')
         # if os.path.isfile(file_name + '.xlsx'):
             # file_name = f'{file_name}_{time.time_ns()}'
@@ -320,10 +346,10 @@ class Utility:
                 df = df.sort_values(['Кадастровый номер', 'Дата регистрации права'], ascending=[True, False])
 
                 df.to_excel(writer, sheet_name='dataset', header=True, index=False)
-                logger.debug(f'Finished to sort and beautify data of <{str(projects)}> at dataset list')
+                logger.debug(f'Finished to sort and beautify data of <{project}> at dataset list')
             except Exception as e:
                 logger.error("Cannot create <dataset> list:")
                 logger.error(e)
         else:
-            logger.debug(f'List dataset of <{str(projects)}> cant be done because of history is missing')
-        writer.save()
+            logger.debug(f'List dataset of <{project}> cant be done because of history is missing')
+        writer.close()

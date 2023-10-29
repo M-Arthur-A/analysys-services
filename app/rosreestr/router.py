@@ -1,12 +1,14 @@
 from datetime import date
 
 from fastapi import APIRouter, Depends, Request, UploadFile
+from fastapi.encoders import jsonable_encoder
 from fastapi_cache.decorator import cache
 from fastapi.responses import FileResponse
 
 from app.users.models import Users
 from app.users.dependencies import get_current_user
 from app.rosreestr.query.models import Queries
+from app.rosreestr.query.repo import QueriesDAO
 from app.rosreestr.query.order.models import Orders
 from app.rosreestr.schemas import SOrders, SQuery, SReorder, SDownload
 from app.rosreestr.utility import Utility
@@ -18,65 +20,52 @@ router = APIRouter(prefix="/rr",
 async def create_upload_file(file: UploadFile):
     return {"filename": file.filename}
 
-# @cache(expire=20)
-# async def get_orders(current_user: Users = Depends(get_current_user)
+# @cache(expire=120)
 @router.get('/queries')
-async def get_queries():# -> list[SOrders]:
-    temp = [
-            {'id': 1,
-             'name': 'fierst_try',
-             'is_ready': False,
-             'orders': [
-                {
-                    'cadastral': '54:35:061735:130',
-                    'cadastral_type': 'simple',
-                    'status': 'processing',
-                    'detail': '/asdasd/as/da/a/sdasdasds',
-                    'created_at': date.today(),
-                },
-                {
-                    'cadastral': '54:35:061735:131',
-                    'cadastral_type': 'simple',
-                    'status': 'processed',
-                    'detail': '/asdasd/as/da/a/sdasdasds',
-                    'created_at': date.today(),
-                },
-            ]},
-            {'id': 2,
-             'name': 'second_try',
-             'is_ready': True,
-             'orders': [
-                {
-                    'cadastral': '54:35:061735:130',
-                    'cadastral_type': 'history',
-                    'status': 'processed',
-                    'detail': '/asdasd/as/da/a/sdasdasds',
-                    'created_at': date.today(),
-                },
-                {
-                    'cadastral': '54:35:061735:131',
-                    'cadastral_type': 'history',
-                    'status': 'processed',
-                    'detail': '/asdasd/as/da/a/sdasdasds',
-                    'created_at': date.today(),
-                },
-            ]},
+async def get_queries(current_user: Users = Depends(get_current_user)) -> dict:
+    """
+    [
+        {'id': 1,
+            'name': 'first_try',
+            'is_ready': False,
+            'orders': [
+            {
+                'cadastral': 'xx:xx:xxxxx:xxxxx',
+                'cadastral_type': 'simple',
+                'status': 'processing',
+                'status_txt': 'в процессе',
+                'created_at': 'da.te.2023',
+            },
+        ]},
     ]
-    return temp
-
-
-@router.post('/download')
-async def download(d_file: SDownload):
-    return FileResponse(path=f'/tmp/rosreestr/{d_file.query_id}',
-                        filename=d_file.query_name+'.zip',
-                        media_type='application/zip')
+    """
+    answer = await QueriesDAO.get_all(user_id=current_user.id)
+    answer = jsonable_encoder(answer)
+    return answer
 
 
 @router.post('/query')
-async def add(query: SQuery): #, user: Users = Depends(get_current_user)):
-    print(query.project, query.query_s, query.query_h)
+async def add(query: SQuery,
+              current_user: Users = Depends(get_current_user)):
+    await Utility.create_orders_by_txt(
+        query=query,
+        user_id=current_user.id
+    )
+
+
+@router.get('/download')
+async def download(query_id: int, query_name: str):
+    await Utility.prepare_for_download(query_id, query_name)
+    return FileResponse(path=f'/tmp/rosreestr/{query_name}.zip',
+                        filename=query_name+'.zip',
+                        media_type='application/octet-stream')
 
 
 @router.post('/reorder')
 async def reorder(query: SReorder):
     print(str(query.query_id) + ' reordered')
+
+
+@router.post('/refresh')
+async def refresh(query: SReorder):
+    await Utility.check_orders()

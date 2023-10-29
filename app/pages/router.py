@@ -16,6 +16,7 @@ async def login_page(request: Request):
     return templates.TemplateResponse('template.html', {"request": request,
                                                         "top_panel": None,
                                                         "page": "login.html",
+                                                        "modal": "modal_reg.html",
                                                         })
 @router.get('/rr')
 async def rosreestr_page(request: Request, queries = Depends(get_queries)):

@@ -1,4 +1,5 @@
 import uvicorn
+from sqladmin import Admin
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -6,6 +7,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.pages.router import router as router_pages
 from app.rosreestr.router import router as router_rosreestr
 from app.users.router import router as router_users
+from app.database import engine
+from app.admin.views import UsersAdmin, QueriesAdmin, OrdersAdmin
+from app.admin.auth import authentication_backend
+
 
 
 app = FastAPI(
@@ -17,6 +22,10 @@ app.include_router(router_pages)
 app.include_router(router_rosreestr)
 app.include_router(router_users)
 
+admin = Admin(app, engine, authentication_backend=authentication_backend)
+admin.add_view(UsersAdmin)
+admin.add_view(QueriesAdmin)
+admin.add_view(OrdersAdmin)
 
 origins = [
     "http://localhost:3000", # 3000 - порт, на котором работает фронтенд на React.js

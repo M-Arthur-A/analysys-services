@@ -5,6 +5,7 @@ from sqlalchemy import join, select
 from app.database import async_session_maker
 from app.repository.repo import BaseDAO
 from app.rosreestr.query.order.models import Orders
+from app.rosreestr.schemas import SOrderFull
 from app.rosreestr.query.models import Queries
 
 
@@ -13,11 +14,7 @@ class OrdersDAO(BaseDAO):
 
 
     @classmethod
-    async def get_one(cls, query_id: int, order_id: int) -> Orders:
-        ...
-
-    @classmethod
-    async def get_all_by_user(cls, user_id: int, *filters) -> list[Orders]:
+    async def get_all_by_user(cls, user_id: int, *filters) -> list[SOrderFull]:
         """
         select * from rr_queries q
         left join rr_orders r on r.query_id = q.id
@@ -29,7 +26,7 @@ class OrdersDAO(BaseDAO):
             .where(Queries.user_id == user_id)
         async with async_session_maker() as session:
             result = await session.execute(query)
-            return result.all()
+            return result.mappings().all()
 
     @classmethod
     async def get_all_unready(cls) -> list[Orders]:
@@ -40,20 +37,7 @@ class OrdersDAO(BaseDAO):
                   (o.status != 'Error');
         """
         query = select(Orders)\
-            .where((Orders.is_ready != None) & (Orders.status != 'Error'))
+            .where((Orders.is_ready == None) & (Orders.status != 'Error'))
         async with async_session_maker() as session:
             result = await session.execute(query)
-            return result.all()
-
-    @classmethod
-    async def modify(cls,
-                     order_id:       str,
-                     new_status:     str,
-                     new_status_txt: str,
-                     modified_at:    date,
-                     ):
-        ...
-
-    @classmethod
-    async def delete(cls, query_id: int):
-        ...
+            return result.scalars().all()

@@ -1,5 +1,4 @@
-logo.svg
-favicon.svg
+*.svg
 *.log
 .env
 flask-server.py

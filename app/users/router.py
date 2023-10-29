@@ -5,7 +5,7 @@ from app.users.auth import authenticate_user, create_access_token, get_password_
 from app.users.dependencies import get_current_user
 from app.users.models import Users
 from app.users.schemas import SUserAuth
-from app.exceptions import UserAlreadyExistsException, UserIsNotPresentException
+from app.exceptions import UserAlreadyExistsException, UserIsNotPresentException, UserIsNotActivatedException
 
 
 router = APIRouter(
@@ -19,13 +19,20 @@ async def register_user(user_data: SUserAuth):
     if existing_user:
         raise UserAlreadyExistsException
     hashed_password = get_password_hash(user_data.password)
-    await UsersDAO.add(username=user_data.username, hashed_password=hashed_password)
+    await UsersDAO.add(
+        username=user_data.username,
+        hashed_password=hashed_password,
+        activated=False,
+        role='user',
+    )
 
 @router.post("/login")
 async def login_user(response: Response, user_data: SUserAuth):
     user = await authenticate_user(user_data.username, user_data.password)
     if not user:
         raise UserIsNotPresentException
+    if not user.activated:
+        raise UserIsNotActivatedException
     access_token = create_access_token({'sub': str(user.id)})
     response.set_cookie("booking_access_token", access_token, httponly=True)
     return access_token

@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from datetime import date
 
 
@@ -16,6 +16,20 @@ class SOrders(BaseModel):
     is_ready:       bool
     orders:         list[SOrder]
 
+class SOrderFull(BaseModel):
+    id:             str
+    query_id:       int
+    session_id:     str
+    cadastral:      str
+    cadastral_type: str
+    status:         str
+    status_txt:     str
+    is_ready:       bool
+    created_at:     date
+    modified_at:    date
+
+class SOrdersFull(BaseModel):
+    orders: list[SOrderFull]
 
 class SReorder(BaseModel):
     query_id: int

@@ -1,4 +1,6 @@
 import pytest
+from icecream import ic
+import os
 
 from app.config import settings
 from app.rosreestr.utility import Utility
@@ -28,10 +30,15 @@ async def test_creating_orders(user_id, prj, q_s, q_h):
     orders_after = len(await OrdersDAO.get_all_by_user(user_id=user_id))
     assert (orders_after - orders_before) == 2
 
+
 async def test_checking_orders():
     # create testing objects with download links
+    utility = Utility()
     # 1. processing
-    # 2. error
-    # 3. processed
-    # 3.1 download file
-    pass
+    await utility.check_orders()
+    assert 1 == 1
+
+async def test_dir():
+    utility = Utility()
+    utility.session._check_dir('testing')
+    assert os.path.exists('/tmp/rosreestr/testing')

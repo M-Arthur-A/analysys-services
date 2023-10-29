@@ -24,3 +24,4 @@ class Orders(Base):
 
     def __str__(self):
         return f"order #{self.id} {self.cadastral_type}{self.cadastral}"
+
