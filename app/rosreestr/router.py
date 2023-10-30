@@ -58,14 +58,14 @@ async def download(query_id: int, query_name: str):
     await Utility.prepare_for_download(query_id, query_name)
     return FileResponse(path=f'/tmp/rosreestr/{query_name}.zip',
                         filename=query_name+'.zip',
-                        media_type='application/octet-stream')
+                        media_type='application/zip')
 
 
 @router.post('/reorder')
 async def reorder(query: SReorder):
-    print(str(query.query_id) + ' reordered')
+    await Utility.reorder(query_id=query.query_id)
 
 
 @router.post('/refresh')
 async def refresh(query: SReorder):
-    await Utility.check_orders()
+    await Utility.check_orders(query_id=query.query_id)

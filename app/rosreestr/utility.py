@@ -44,6 +44,7 @@ class Utility:
         project = cls.session.get_project(query.project)
         query_id = await QueriesDAO.add(project=project, user_id=user_id)
         for order in query.query_s.split('\n') if query.query_s else ():
+            order = cls.session.cadastral_verify(order)
             result = await cls.session.create(order, 'simple')
             await OrdersDAO.add(
                 query_id=query_id,
@@ -55,8 +56,9 @@ class Utility:
                 status_txt=result['status_txt'],
                 created_at=datetime.strptime(result['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ'),
                 modified_at=datetime.strptime(result['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ'),
-                )
+            )
         for order in query.query_h.split(r'\r\n') if query.query_h else ():
+            order = cls.session.cadastral_verify(order)
             result = await cls.session.create(order, 'history')
             await OrdersDAO.add(
                 query_id=query_id,
@@ -68,7 +70,7 @@ class Utility:
                 status_txt=result['status_txt'],
                 created_at=datetime.strptime(result['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ'),
                 modified_at=datetime.strptime(result['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ'),
-                )
+            )
 
 
     # @classmethod
@@ -77,12 +79,16 @@ class Utility:
 
 
     @classmethod
-    async def check_orders(cls):
+    async def check_orders(cls, query_id=None):
         """
-        for celery
+        без аргумента - for celery
+        с аргументом  - проверить и скачать все по query_id
         """
-        orders = await OrdersDAO.get_all_unready()
-        for order in orders:
+        if query_id:
+            orders = await OrdersDAO.find_all(query_id=int(query_id))
+        else:
+            orders = await OrdersDAO.get_all_unready()
+        for order in orders if orders else ():
             result = await cls.session.check(
                 session_id=order.session_id,
                 cadastral=order.cadastral,
@@ -111,6 +117,23 @@ class Utility:
                     item_id=order.id,
                     is_ready=True,
                 )
+
+    @classmethod
+    async def reorder(cls, query_id):
+        orders = await OrdersDAO.find_all(query_id=int(query_id), status='Processing')
+        for order in orders if orders else ():
+            result = await cls.session.create(order, 'simple')
+            await OrdersDAO.add(
+                query_id=query_id,
+                id=result['uid'],
+                session_id=result['session_id'],
+                cadastral=order.cadastral,
+                cadastral_type=order.cadastral_type,
+                status=result['status'],
+                status_txt=result['status_txt'],
+                created_at=datetime.strptime(result['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ'),
+                modified_at=datetime.strptime(result['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ'),
+            )
 
 
     @classmethod

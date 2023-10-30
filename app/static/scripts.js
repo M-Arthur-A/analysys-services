@@ -59,7 +59,25 @@ async function rrDownload(query_id, query_name) {
 
     await fetch(url.concat('?', queryParams), {
         method: 'GET'
-    }).then(response => {});
+    })
+    .then(res => {
+        const disposition = res.headers.get('Content-Disposition');
+        filename = disposition.split(/;(.+)/)[1].split(/=(.+)/)[1];
+        if (filename.toLowerCase().startsWith("utf-8''"))
+            filename = decodeURIComponent(filename.replace("utf-8''", ''));
+        else
+            filename = filename.replace(/['"]/g, '');
+        return res.blob();
+    })
+    .then(blob => {
+        var url = window.URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    });
 }
 
 async function rrReorder(query_id) {

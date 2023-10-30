@@ -1,4 +1,4 @@
-from sqladmin import ModelView
+from sqladmin import ModelView, BaseView, expose
 
 from app.users.models import Users
 from app.rosreestr.query.models import Queries
@@ -25,3 +25,25 @@ class OrdersAdmin(ModelView, model=Orders):
     name = "Кадастр"
     name_plural = "Кадастры"
     icon = "fa-solid fa-file-lines"
+
+class MainAdmin(BaseView):
+    name = "Сайт"
+    icon = "fa-solid fa-star"
+
+    @expose("/app", methods=["GET"])
+    def main_page(self, request):
+        return self.templates.TemplateResponse(
+            "_redirect_site.html",
+            context={"request": request},
+        )
+
+class CeleryAdmin(BaseView):
+    name = "Celery"
+    icon = "fa-solid fa-tasks"
+
+    @expose("/flower", methods=["GET"])
+    def main_page(self, request):
+        return self.templates.TemplateResponse(
+            "_redirect_flower.html",
+            context={"request": request},
+        )

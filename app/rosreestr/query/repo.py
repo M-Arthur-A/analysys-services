@@ -17,10 +17,6 @@ class QueriesDAO(BaseDAO):
 
 
     @classmethod
-    async def get_one(cls, query_id: int) -> dict:
-        return await cls.find_by_id(query_id)
-
-    @classmethod
     async def get_name(cls, query_id: int) -> str | None:
         query = select(Queries.name).filter_by(id=query_id)
         async with async_session_maker() as session:
@@ -37,6 +33,7 @@ class QueriesDAO(BaseDAO):
         """
         query = select(Queries)\
             .where(Queries.user_id == user_id)\
+            .order_by(Queries.id.desc())\
             .options(joinedload(Queries.orders)) # one-to-many
         async with async_session_maker() as session:
             result = await session.execute(query)

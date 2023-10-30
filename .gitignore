@@ -8,3 +8,4 @@ volumes
 private
 kontur
 app/migrations/versions
+celerybeat-schedule

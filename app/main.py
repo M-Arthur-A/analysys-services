@@ -8,7 +8,7 @@ from app.pages.router import router as router_pages
 from app.rosreestr.router import router as router_rosreestr
 from app.users.router import router as router_users
 from app.database import engine
-from app.admin.views import UsersAdmin, QueriesAdmin, OrdersAdmin
+from app.admin.views import UsersAdmin, QueriesAdmin, OrdersAdmin, MainAdmin, CeleryAdmin
 from app.admin.auth import authentication_backend
 
 
@@ -22,7 +22,12 @@ app.include_router(router_pages)
 app.include_router(router_rosreestr)
 app.include_router(router_users)
 
-admin = Admin(app, engine, authentication_backend=authentication_backend)
+admin = Admin(app, engine,
+              authentication_backend=authentication_backend,
+              templates_dir="app/templates"
+              )
+admin.add_view(MainAdmin)
+admin.add_view(CeleryAdmin)
 admin.add_view(UsersAdmin)
 admin.add_view(QueriesAdmin)
 admin.add_view(OrdersAdmin)

@@ -32,10 +32,14 @@ def restart_systemctl(services: list[str]=['postgresql', 'redis']):
                 raise Exception(f"{service} cant start")
 
 
-def restart_celery(worker: Literal['flower', 'worker'] ='flower'):
-    worker_arg = 'worker --loglevel=INFO' if worker == 'worker' else 'flower'
-    cout = subprocess.Popen(f"poetry run celery -A app.tasks.celery:celery {worker_arg}", shell=True)
-    print('celery has started', cout)
+def restart_celery():
+    cout = subprocess.Popen(f"poetry run celery -A app.tasks.celery:celery beat --loglevel=INFO", shell=True)
+    print('celery scheduling has started', cout)
+    cout = subprocess.Popen(f"poetry run celery -A app.tasks.celery:celery worker --loglevel=INFO -B", shell=True)
+    print('celery workers has started', cout)
+    cout = subprocess.Popen(f"poetry run celery -A app.tasks.celery:celery flower --loglevel=INFO", shell=True)
+    print('celery monitoring has started', cout)
+
 
 def restart_server():
     uvicorn.run("app.main:app",
@@ -45,7 +49,6 @@ def restart_server():
 
 
 if __name__ == "__main__":
-    # restart_systemctl(['postgresql', 'redis'])
-    # restart_celery()
-    restart_systemctl(['postgresql'])
+    restart_systemctl(['postgresql', 'redis'])
+    restart_celery()
     restart_server()
