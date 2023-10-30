@@ -12,14 +12,14 @@ from app.rosreestr.query.order.repo import OrdersDAO
     (
         2,
         "test_prj",
-        r"77:02:0004001:211",
-        r"77:02:0004001:210"
+        "77:02:0004001:211",
+        "77:02:0004001:210"
     ),
     (
         1,
         None,
-        r"77:02:0004001:211\r\n77:02:0004001:210",
-        r""
+        "77:02:0004001:211\n77:02:0004001:210",
+        ""
     ),
 ])
 async def test_creating_orders(user_id, prj, q_s, q_h):
@@ -32,9 +32,7 @@ async def test_creating_orders(user_id, prj, q_s, q_h):
 
 
 async def test_checking_orders():
-    # create testing objects with download links
     utility = Utility()
-    # 1. processing
     await utility.check_orders()
     assert 1 == 1
 

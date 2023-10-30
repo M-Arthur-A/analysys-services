@@ -12,6 +12,7 @@ from app.rosreestr.query.repo import QueriesDAO
 from app.rosreestr.query.order.models import Orders
 from app.rosreestr.schemas import SOrders, SQuery, SReorder, SDownload
 from app.rosreestr.utility import Utility
+from app.tasks.tasks import rr_quering
 
 router = APIRouter(prefix="/rr",
                    tags=['Росреестр'])
@@ -47,10 +48,12 @@ async def get_queries(current_user: Users = Depends(get_current_user)) -> dict:
 @router.post('/query')
 async def add(query: SQuery,
               current_user: Users = Depends(get_current_user)):
-    await Utility.create_orders_by_txt(
+    query_id = await Utility.create_orders_by_txt(
         query=query,
         user_id=current_user.id
     )
+    # send task to celery
+    await rr_quering.delay(query_id)
 
 
 @router.get('/download')
@@ -64,6 +67,8 @@ async def download(query_id: int, query_name: str):
 @router.post('/reorder')
 async def reorder(query: SReorder):
     await Utility.reorder(query_id=query.query_id)
+    # send task to celery
+    await rr_quering.delay(query.query_id)
 
 
 @router.post('/refresh')

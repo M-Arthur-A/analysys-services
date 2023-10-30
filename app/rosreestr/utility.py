@@ -19,6 +19,7 @@ from app.rosreestr.query.repo import QueriesDAO
 from app.rosreestr.query.order.repo import OrdersDAO
 from app.rosreestr.query.order.models import Orders
 from app.rosreestr.schemas import SDownload, SQuery
+from app.users.models import Users # need for celery detection
 from app.config import settings
 sys.path.append(settings.RR_API_LIB_PATH)
 from kr import Queries as kr_connector
@@ -40,37 +41,52 @@ class Utility:
 
 
     @classmethod
-    async def create_orders_by_txt(cls, query: SQuery, user_id: int):
+    async def create_orders_by_txt(cls, query: SQuery, user_id: int) -> int:
         project = cls.session.get_project(query.project)
         query_id = await QueriesDAO.add(project=project, user_id=user_id)
         for order in query.query_s.split('\n') if query.query_s else ():
             order = cls.session.cadastral_verify(order)
-            result = await cls.session.create(order, 'simple')
             await OrdersDAO.add(
+                id=cls.session.get_uid(t='uid'),
                 query_id=query_id,
-                id=result['uid'],
-                session_id=result['session_id'],
                 cadastral=order,
                 cadastral_type='simple',
-                status=result['status'],
-                status_txt=result['status_txt'],
-                created_at=datetime.strptime(result['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ'),
-                modified_at=datetime.strptime(result['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ'),
+                status='new',
+                created_at=datetime.now(),
+                modified_at=datetime.now(),
             )
         for order in query.query_h.split(r'\r\n') if query.query_h else ():
             order = cls.session.cadastral_verify(order)
-            result = await cls.session.create(order, 'history')
             await OrdersDAO.add(
+                id=cls.session.get_uid(t='uid'),
                 query_id=query_id,
-                id=result['uid'],
-                session_id=result['session_id'],
                 cadastral=order,
                 cadastral_type='history',
+                status='new',
+                created_at=datetime.now(),
+                modified_at=datetime.now(),
+            )
+        return query_id
+
+
+    @classmethod
+    async def query_orders(cls, query_id):
+        """
+        for celery
+        """
+        orders = await OrdersDAO.find_all(query_id=query_id, status='new')
+        for order in orders if orders else ():
+            result = await cls.session.create(order.id, order.cadastral, order.cadastral_type)
+            await OrdersDAO.update(
+                item_id=order.id,
+                session_id=result['session_id'],
                 status=result['status'],
                 status_txt=result['status_txt'],
                 created_at=datetime.strptime(result['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ'),
                 modified_at=datetime.strptime(result['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ'),
             )
+
+
 
 
     # @classmethod
@@ -84,6 +100,7 @@ class Utility:
         без аргумента - for celery
         с аргументом  - проверить и скачать все по query_id
         """
+        # сделать, чтобы проставлялся is_ready после скачки всех ордеров
         if query_id:
             orders = await OrdersDAO.find_all(query_id=int(query_id))
         else:
@@ -122,17 +139,14 @@ class Utility:
     async def reorder(cls, query_id):
         orders = await OrdersDAO.find_all(query_id=int(query_id), status='Processing')
         for order in orders if orders else ():
-            result = await cls.session.create(order, 'simple')
             await OrdersDAO.add(
+                id=cls.session.get_uid(t='uid'),
                 query_id=query_id,
-                id=result['uid'],
-                session_id=result['session_id'],
                 cadastral=order.cadastral,
                 cadastral_type=order.cadastral_type,
-                status=result['status'],
-                status_txt=result['status_txt'],
-                created_at=datetime.strptime(result['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ'),
-                modified_at=datetime.strptime(result['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ'),
+                status='new',
+                created_at=datetime.now(),
+                modified_at=datetime.now(),
             )
 
 
