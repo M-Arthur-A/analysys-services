@@ -25,7 +25,7 @@ app.include_router(router_users)
 admin = Admin(app, engine,
               authentication_backend=authentication_backend,
               templates_dir="app/templates"
-              )
+             )
 admin.add_view(MainAdmin)
 admin.add_view(CeleryAdmin)
 admin.add_view(UsersAdmin)

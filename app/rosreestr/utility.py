@@ -51,7 +51,7 @@ class Utility:
                 query_id=query_id,
                 cadastral=order,
                 cadastral_type='simple',
-                status='new',
+                status='New',
                 created_at=datetime.now(),
                 modified_at=datetime.now(),
             )
@@ -62,7 +62,7 @@ class Utility:
                 query_id=query_id,
                 cadastral=order,
                 cadastral_type='history',
-                status='new',
+                status='New',
                 created_at=datetime.now(),
                 modified_at=datetime.now(),
             )
@@ -70,11 +70,14 @@ class Utility:
 
 
     @classmethod
-    async def query_orders(cls, query_id):
+    async def query_orders(cls, query_id: int | None = None):
         """
         for celery
         """
-        orders = await OrdersDAO.find_all(query_id=query_id, status='new')
+        if query_id:
+            orders = await OrdersDAO.find_all(query_id=query_id, status='New')
+        else:
+            orders = await OrdersDAO.find_all(status='New')
         for order in orders if orders else ():
             result = await cls.session.create(order.id, order.cadastral, order.cadastral_type)
             await OrdersDAO.update(
@@ -144,10 +147,16 @@ class Utility:
                 query_id=query_id,
                 cadastral=order.cadastral,
                 cadastral_type=order.cadastral_type,
-                status='new',
+                status='New',
                 created_at=datetime.now(),
                 modified_at=datetime.now(),
             )
+
+
+
+    @classmethod
+    async def find(cls, query: str):
+        return await cls.session.search(query)
 
 
     @classmethod

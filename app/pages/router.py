@@ -15,7 +15,7 @@ templates = Jinja2Templates(directory="app/templates")
 async def login_page(request: Request):
     return templates.TemplateResponse('template.html', {"request": request,
                                                         "top_panel": None,
-                                                        "page": "login.html",
+                                                        "page": "log-reg.html",
                                                         "modal": "modal_reg.html",
                                                         })
 @router.get('/rr')

@@ -1,7 +1,7 @@
-from typing import Literal
 import uvicorn
 import getpass
 import subprocess
+import time
 
 from app.config import settings
 
@@ -33,10 +33,11 @@ def restart_systemctl(services: list[str]=['postgresql', 'redis']):
 
 
 def restart_celery():
-    cout = subprocess.Popen(f"poetry run celery -A app.tasks.celery:celery beat --loglevel=INFO", shell=True)
-    print('celery scheduling has started', cout)
-    cout = subprocess.Popen(f"poetry run celery -A app.tasks.celery:celery worker --loglevel=INFO -B", shell=True)
+    # cout = subprocess.Popen(f"poetry run celery -A app.tasks.celery:celery beat --loglevel=INFO", shell=True)
+    # print('celery scheduling has started', cout)
+    cout = subprocess.Popen(f"poetry run celery -A app.tasks.celery:celery worker --loglevel=INFO --beat", shell=True)
     print('celery workers has started', cout)
+    time.sleep(5)
     cout = subprocess.Popen(f"poetry run celery -A app.tasks.celery:celery flower --loglevel=INFO", shell=True)
     print('celery monitoring has started', cout)
 

@@ -124,3 +124,22 @@ async function rrRefresh(query_id) {
         body: JSON.stringify({query_id: query_id}),
     }).then(response => {});
 }
+
+async function rrSearch() {
+    const query = document.getElementById("rrSearchQuery").value;
+    const url = "http://localhost:8000/rr/find"
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({query: query}),
+    });
+    text = await response.text();
+    txtarea = document.getElementById("rr_search_res");
+    const linecount = (text.replaceAll('\n', '').length - text.length) / 2
+    txtarea.innerText = text.replaceAll(/"/g, "").replaceAll('\n', '\\u000A');
+    txtarea.style.height = (100 + (50 * linecount)).toString() + "px";
+    const hiddenDiv = document.getElementById("rr_search_area");
+    hiddenDiv.style.display = 'inline-block';
+}

@@ -1,5 +1,7 @@
 from datetime import datetime
 import os
+import asyncio
+import functools
 
 from celery.schedules import crontab
 from celery.utils.log import get_task_logger
@@ -10,7 +12,6 @@ from app.rosreestr.utility import Utility as rr_utility
 
 
 logger = get_task_logger(__name__)
-
 
 celery.conf.beat_schedule = {
     'rr_check-every-two-min': {
@@ -23,15 +24,26 @@ celery.conf.beat_schedule = {
         'args': ('/tmp/rosreestr', 10),
     },
 }
+celery.conf.update(imports=['tasks.tasks'])
+
+def sync(f):
+    @functools.wraps(f)
+    def wrapper(*args, **kwargs):
+        return asyncio.get_event_loop().run_until_complete(f(*args, **kwargs))
+    return wrapper
+
+
+@celery.task(name="rr_quering")
+def rr_adding(query_id: int | None = None):
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(rr_utility.query_orders(query_id))
 
 
 @celery.task
-async def rr_quering(query_id: int):
-    await rr_utility.query_orders(query_id)
+def rr_monitoring():
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(rr_utility.check_orders())
 
-@celery.task
-async def rr_monitoring():
-    await rr_utility.check_orders()
 
 @celery.task
 def folder_cleaning(path: str, days_expire: int):

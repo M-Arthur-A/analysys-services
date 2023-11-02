@@ -13,6 +13,7 @@ class UsersAdmin(ModelView, model=Users):
     name_plural = "Пользователи"
     icon = "fa-solid fa-user"
 
+
 class QueriesAdmin(ModelView, model=Queries):
     column_list = [c.name for c in Queries.__table__.c] + [Queries.orders, Queries.user]
     name = "Заказ"
@@ -26,23 +27,25 @@ class OrdersAdmin(ModelView, model=Orders):
     name_plural = "Кадастры"
     icon = "fa-solid fa-file-lines"
 
+
 class MainAdmin(BaseView):
     name = "Сайт"
     icon = "fa-solid fa-star"
 
     @expose("/app", methods=["GET"])
-    def main_page(self, request):
+    def site_page(self, request):
         return self.templates.TemplateResponse(
             "_redirect_site.html",
             context={"request": request},
         )
+
 
 class CeleryAdmin(BaseView):
     name = "Celery"
     icon = "fa-solid fa-tasks"
 
     @expose("/flower", methods=["GET"])
-    def main_page(self, request):
+    def flower_page(self, request):
         return self.templates.TemplateResponse(
             "_redirect_flower.html",
             context={"request": request},

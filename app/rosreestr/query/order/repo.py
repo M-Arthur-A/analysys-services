@@ -37,7 +37,12 @@ class OrdersDAO(BaseDAO):
                   (o.status != 'Error');
         """
         query = select(Orders)\
-            .where((Orders.is_ready == None) & (Orders.status != 'Error'))
+            .where(
+                (Orders.is_ready == None) & \
+                (Orders.status != 'Error') & \
+                (Orders.status != 'New') & \
+                (Orders.status != None)
+            )
         async with async_session_maker() as session:
             result = await session.execute(query)
             return result.scalars().all()

@@ -43,3 +43,6 @@ class SQuery(BaseModel):
     project: str | None
     query_s: str | None
     query_h: str | None
+
+class SSearch(BaseModel):
+    query: str

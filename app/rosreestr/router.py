@@ -10,9 +10,9 @@ from app.users.dependencies import get_current_user
 from app.rosreestr.query.models import Queries
 from app.rosreestr.query.repo import QueriesDAO
 from app.rosreestr.query.order.models import Orders
-from app.rosreestr.schemas import SOrders, SQuery, SReorder, SDownload
+from app.rosreestr.schemas import SOrders, SQuery, SReorder, SDownload, SSearch
 from app.rosreestr.utility import Utility
-from app.tasks.tasks import rr_quering
+from app.tasks.tasks import rr_adding
 
 router = APIRouter(prefix="/rr",
                    tags=['Росреестр'])
@@ -53,7 +53,7 @@ async def add(query: SQuery,
         user_id=current_user.id
     )
     # send task to celery
-    await rr_quering.delay(query_id)
+    rr_adding.delay(query_id)
 
 
 @router.get('/download')
@@ -68,9 +68,23 @@ async def download(query_id: int, query_name: str):
 async def reorder(query: SReorder):
     await Utility.reorder(query_id=query.query_id)
     # send task to celery
-    await rr_quering.delay(query.query_id)
+    rr_adding.delay(query.query_id)
 
 
 @router.post('/refresh')
 async def refresh(query: SReorder):
     await Utility.check_orders(query_id=query.query_id)
+
+
+# @cache(expire=120)
+@router.post('/find')
+async def find(query: SSearch) -> str:
+    return await Utility.find(query=query.query)
+
+@router.delete('/del')
+async def delete(query_id: int):
+    return await QueriesDAO.delete(query_id=query_id)
+
+@router.get('/create')
+async def create_if_not():
+    rr_adding.delay()

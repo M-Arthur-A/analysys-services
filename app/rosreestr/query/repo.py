@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy.orm import joinedload
 from app.rosreestr.query.order.models import Orders
 
-from sqlalchemy import Column, DateTime, insert, select
+from sqlalchemy import Column, DateTime, insert, select, delete
 from sqlalchemy.sql import func
 from sqlalchemy.orm import lazyload
 
@@ -52,3 +52,12 @@ class QueriesDAO(BaseDAO):
             new_query_id = await session.execute(query)
             await session.commit()
             return new_query_id.scalar_one()
+
+    @classmethod
+    async def delete(cls, query_id: int):
+        query_q = delete(cls.model).where(cls.model.id == query_id)
+        query_o = delete(Orders).where(Orders.query_id == query_id)
+        async with async_session_maker() as session:
+            await session.execute(query_o)
+            await session.execute(query_q)
+            await session.commit()

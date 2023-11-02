@@ -213,6 +213,20 @@ test = ["anyio[trio]", "coverage[toml] (>=4.5)", "hypothesis (>=4.0)", "mock (>=
 trio = ["trio (<0.22)"]
 
 [[package]]
+name = "asgiref"
+version = "3.7.2"
+description = "ASGI specs, helper code, and adapters"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "asgiref-3.7.2-py3-none-any.whl", hash = "sha256:89b2ef2247e3b562a16eef663bc0e2e703ec6468e2fa8a5cd61cd449786d4f6e"},
+    {file = "asgiref-3.7.2.tar.gz", hash = "sha256:9e0ce3aa93a819ba5b45120216b23878cf6e8525eb3848653452b4192b92afed"},
+]
+
+[package.extras]
+tests = ["mypy (>=0.800)", "pytest", "pytest-asyncio"]
+
+[[package]]
 name = "asttokens"
 version = "2.4.0"
 description = "Annotate AST trees with source code positions"
@@ -376,6 +390,21 @@ tblib = ["tblib (>=1.3.0)", "tblib (>=1.5.0)"]
 yaml = ["PyYAML (>=3.10)"]
 zookeeper = ["kazoo (>=1.3.1)"]
 zstd = ["zstandard (==0.21.0)"]
+
+[[package]]
+name = "celery-pool-asyncio"
+version = "0.2.0"
+description = "Celery pool to run coroutine tasks"
+optional = false
+python-versions = "*"
+files = [
+    {file = "celery-pool-asyncio-0.2.0.tar.gz", hash = "sha256:330e0ff31a7f6e3ea9cb004843f2f967601602b52cee05a2faea7ed65b76a5b8"},
+    {file = "celery_pool_asyncio-0.2.0-py2.py3-none-any.whl", hash = "sha256:72cdec065060bc99af57771cba7f0444d8a901842ee3c859d0d167c547764a21"},
+]
+
+[package.dependencies]
+asgiref = "*"
+celery = "*"
 
 [[package]]
 name = "certifi"
@@ -1740,6 +1769,17 @@ files = [
 ]
 
 [[package]]
+name = "pyclean"
+version = "2.7.5"
+description = "Pure Python cross-platform pyclean. Clean up your Python bytecode."
+optional = false
+python-versions = "*"
+files = [
+    {file = "pyclean-2.7.5-py3-none-any.whl", hash = "sha256:d0162d2515ee7eef8903cfac3e7c84e114b7423ebd098d1f56c93ee2dc01d214"},
+    {file = "pyclean-2.7.5.tar.gz", hash = "sha256:5c5eb5771f46d2becd6ac085b0ff6ad17be315af4a01f9dd5e05b0582bb3d441"},
+]
+
+[[package]]
 name = "pydantic"
 version = "2.4.2"
 description = "Data validation using Python type hints"
@@ -2851,4 +2891,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "d214b6ce74bb71cbe0163fc90bc4063cb9ee9bc2a99c7a45d0c5ea2618a94e0a"
+content-hash = "5a9b9d93bd2b5aa01af4f32515abaca316386ff74b1b2cc9c9551cb0efe6ba71"

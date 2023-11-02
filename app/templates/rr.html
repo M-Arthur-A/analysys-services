@@ -26,7 +26,7 @@
                 <textarea type="text" id="query_h" placeholder="кадастровые номера через <enter>" style="resize: none; height: 100px; width: 245px; margin: 5px 0px 10px 0px;"></textarea>
               </div>
             </div>
-            <Button onclick="rrQuery()">отправить запрос</Button>
+            <button onclick="rrQuery()">отправить запрос</button>
           </div>
 
           <hr hidden>
@@ -43,7 +43,7 @@
           </div>
         </div>
       </div>
-      <div class="tab">
+      <div hidden class="tab">
         <input type="checkbox" id="chck2">
         <label class="tab-label" for="chck2" style="background: linear-gradient(45deg, #eee, #ffffff);">Поиск недвижимости</label>
         <div class="tab-content">
@@ -52,10 +52,13 @@
             <p>Например:</p>
             <p>&nbsp;&nbsp;&nbsp;&nbsp;54:35:061735:*</p>
             <p>&nbsp;&nbsp;&nbsp;&nbsp;г Иваново, Конспиративный пер, д 14</p>
-            <form method=post action="/rr/search">
-              <input type="text" name="text" style="width: 510px; margin: 10px 0px 10px 0px;">
-              <input type=submit value="отправить запрос">
-            </form>
+            <input id="rrSearchQuery" type="text" name="text" style="width: 510px; margin: 10px 0px 10px 0px;">
+            <button onclick="rrSearch()">поиск</button>
+          </div>
+          <hr>
+          <div id="rr_search_area" hidden class="info">
+            <h2>Результат</h2>
+            <textarea readonly name="text" id="rr_search_res" style="width: 510px; overflow:hidden; resize: none; height: 1px;"></textarea>
           </div>
         </div>
       </div>

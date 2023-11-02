@@ -4,6 +4,7 @@
 flask-server.py
 __pycache__
 .ruff_cache
+.pytest_cache
 volumes
 private
 kontur
