@@ -65,7 +65,12 @@
       {% for query in queries %}
       <div class="tab">
         <input type="checkbox" id="{{query.id}}">
-        <label class="tab-label" for="{{query.id}}" style="display: block; text-align: right; background: linear-gradient(45deg, #ffffff, #eee);">{{ query.name }}</label>
+        <label class="tab-label" for="{{query.id}}" style="display: block; text-align: right; background: linear-gradient(45deg, #ffffff, #eee);">
+          {% if query.is_ready %}
+            <b>✔</b>
+          {% endif %}
+          {{ query.name }}
+        </label>
         <div class="tab-content">
           <button title="Скачать" style="padding: 5px;" onClick="rrDownload({{ query.id }},'{{ query.name }}')">
             <img width="30" src="{{ url_for('static', path='icon_download.svg') }}" />

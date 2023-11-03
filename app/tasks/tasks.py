@@ -24,7 +24,7 @@ celery.conf.beat_schedule = {
         'args': ('/tmp/rosreestr', 10),
     },
 }
-celery.conf.update(imports=['tasks.tasks'])
+
 
 def sync(f):
     @functools.wraps(f)
@@ -56,3 +56,4 @@ def folder_cleaning(path: str, days_expire: int):
            if number_of_days > days_expire:
                os.remove(file_path)
                logger.info(f" {days_expire} left, {f} has been deleted")
+

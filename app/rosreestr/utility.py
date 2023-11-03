@@ -3,6 +3,7 @@ from glob import glob as gb
 from zipfile import ZipFile
 from icecream import ic
 import asyncio
+import aiohttp
 import json
 import sys
 import os
@@ -17,6 +18,7 @@ import pandas as pd
 
 from app.rosreestr.query.repo import QueriesDAO
 from app.rosreestr.query.order.repo import OrdersDAO
+from app.users.repo import UsersDAO
 from app.rosreestr.query.order.models import Orders
 from app.rosreestr.schemas import SDownload, SQuery
 from app.users.models import Users # need for celery detection
@@ -33,6 +35,8 @@ class Utility:
         api_key = settings.RR_KR_API_KEY
         org_id  = settings.RR_KR_ORG_ID
 
+    tg_channel = settings.TG_RR_CHANNEL_ID
+    tg_bot = settings.TG_BOT
     session = kr_connector(api_key=api_key,
                            org_id=org_id,
                            logger=logger,
@@ -44,29 +48,25 @@ class Utility:
     async def create_orders_by_txt(cls, query: SQuery, user_id: int) -> int:
         project = cls.session.get_project(query.project)
         query_id = await QueriesDAO.add(project=project, user_id=user_id)
-        for order in query.query_s.split('\n') if query.query_s else ():
-            order = cls.session.cadastral_verify(order)
+        query_s = [('simple',  cad) for cad in query.query_s.split('\n')] if query.query_s else []
+        query_h = [('history', cad) for cad in query.query_h.split('\n')] if query.query_h else []
+        for order in query_s + query_h:
+            cadastral = cls.session.cadastral_verify(order[1])
             await OrdersDAO.add(
                 id=cls.session.get_uid(t='uid'),
                 query_id=query_id,
-                cadastral=order,
-                cadastral_type='simple',
-                status='New',
-                created_at=datetime.now(),
-                modified_at=datetime.now(),
-            )
-        for order in query.query_h.split(r'\r\n') if query.query_h else ():
-            order = cls.session.cadastral_verify(order)
-            await OrdersDAO.add(
-                id=cls.session.get_uid(t='uid'),
-                query_id=query_id,
-                cadastral=order,
-                cadastral_type='history',
+                cadastral=cadastral,
+                cadastral_type=order[0],
                 status='New',
                 created_at=datetime.now(),
                 modified_at=datetime.now(),
             )
         return query_id
+
+
+    # @classmethod
+    # async def create_orders_by_xls(cls, file: File):
+    #     pass
 
 
     @classmethod
@@ -90,20 +90,12 @@ class Utility:
             )
 
 
-
-
-    # @classmethod
-    # async def create_orders_by_xls(cls, file: File):
-    #     pass
-
-
     @classmethod
     async def check_orders(cls, query_id=None):
         """
         без аргумента - for celery
         с аргументом  - проверить и скачать все по query_id
         """
-        # сделать, чтобы проставлялся is_ready после скачки всех ордеров
         if query_id:
             orders = await OrdersDAO.find_all(query_id=int(query_id))
         else:
@@ -121,8 +113,8 @@ class Utility:
                 modified_at=result['modified_at'],
             )
 
+            project = await QueriesDAO.get_name(query_id=order.query_id)
             if result['new_status'] == 'Processed':
-                project = await QueriesDAO.get_name(query_id=order.query_id)
                 await cls.session.download(
                     project=project,
                     file_data=result['file']
@@ -137,6 +129,28 @@ class Utility:
                     item_id=order.id,
                     is_ready=True,
                 )
+
+            if await QueriesDAO.is_all_ready(query_id=order.query_id):
+                cls._analyze(project)
+                cls._zipping(project)
+                await QueriesDAO.update(item_id=order.query_id, is_ready=True)
+                query = await QueriesDAO.find_by_id(model_id=order.query_id)
+                user_name = await UsersDAO.find_by_id(model_id=query['user_id'])
+                message = f"{user_name}, заказ {project} готов"
+                await cls._telegram_send_to_channel(message)
+
+
+    @classmethod
+    async def _telegram_send_to_channel(cls, text: str):
+        URL = f'https://api.telegram.org/bot{cls.tg_bot}/sendMessage?chat_id={cls.tg_channel}&text={text}'
+        async with aiohttp.ClientSession(trust_env=True) as a_session:
+            async with a_session.post(url=URL) as resp:
+                response = await resp.json()
+                if resp.ok:
+                    print('tg sent')
+                else:
+                    print(f'tg not sent: {response}')
+
 
     @classmethod
     async def reorder(cls, query_id):

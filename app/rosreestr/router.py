@@ -26,7 +26,8 @@ async def create_upload_file(file: UploadFile):
 async def get_queries(current_user: Users = Depends(get_current_user)) -> dict:
     """
     [
-        {'id': 1,
+        {
+            'id': 1,
             'name': 'first_try',
             'is_ready': False,
             'orders': [

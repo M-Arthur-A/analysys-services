@@ -49,8 +49,10 @@ class Settings(BaseSettings):
     CELERY_BROKER: str
 
     SITE_NAME:  str
-    TG_BOT:     str
-    TG_CHANNEL: str
+
+    TG_BOT:           str
+    TG_RR_CHANNEL:    str
+    TG_RR_CHANNEL_ID: str
 
     RR_API_LIB_PATH:    str
     TEST_RR_KR_API_KEY: str

@@ -23,7 +23,7 @@ async def rosreestr_page(request: Request, queries = Depends(get_queries)):
     return templates.TemplateResponse('template.html', {
                                             "SITE_NAME": settings.SITE_NAME,
                                             "TG_BOT": settings.TG_BOT,
-                                            "TG_CHANNEL": settings.TG_CHANNEL,
+                                            "TG_CHANNEL": settings.TG_RR_CHANNEL,
                                             "request": request,
                                             "top_panel": "top_panel.html",
                                             "page": "rr.html",

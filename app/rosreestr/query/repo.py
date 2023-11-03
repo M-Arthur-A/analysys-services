@@ -61,3 +61,21 @@ class QueriesDAO(BaseDAO):
             await session.execute(query_o)
             await session.execute(query_q)
             await session.commit()
+
+
+    @classmethod
+    async def is_all_ready(cls, query_id: int) -> bool:
+        """
+        select query_id, status, is_ready from rr_orders
+        where (query_id = 1) and
+        ((status = 'Processing') or (status = 'New') or
+            ((status = 'Processed') and (is_ready = null)));
+        """
+        query = select(Orders)\
+            .where((Orders.query_id == query_id) & \
+                   ((Orders.status == "Processing") | (Orders.status == "New") | \
+                    (Orders.status == "Processed") & (Orders.is_ready == None))
+                  )
+        async with async_session_maker() as session:
+            result = await session.execute(query)
+            return len(result.all()) == 0
