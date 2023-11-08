@@ -14,6 +14,7 @@ from app.database import Base
 from app.users.models import Users
 from app.rosreestr.query.models import Queries
 from app.rosreestr.query.order.models import Orders
+from app.fedresurs.models import OrdersFr
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

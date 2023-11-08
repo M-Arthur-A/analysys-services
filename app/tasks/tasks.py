@@ -8,6 +8,7 @@ from celery.utils.log import get_task_logger
 
 from app.tasks.celery import celery
 from app.rosreestr.utility import Utility as rr_utility
+from app.fedresurs.utility import Utility as fr_utility
 
 
 
@@ -57,3 +58,8 @@ def folder_cleaning(path: str, days_expire: int):
                os.remove(file_path)
                logger.info(f" {days_expire} left, {f} has been deleted")
 
+
+@celery.task(name="fr_running")
+def fr_run(uid: str):
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(fr_utility.scrap(uid))

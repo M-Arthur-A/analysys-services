@@ -1,0 +1,58 @@
+<div>
+  <h1>Банкротные торги</h1>
+  <div class="content" style="width: 600px;">
+    <div class="tabs">
+      <div class="tab">
+        <input type="checkbox" id="chck1">
+        <label class="tab-label" for="chck1" style="background: linear-gradient(45deg, #eee, #ffffff);">Разместить заказ</label>
+        <div class="tab-content">
+          <div class="info">
+            <h2>Заказ</h2>
+            <div style="display: flex;">
+              <div style="text-align: center;">
+                <div>
+                  <label>ИННы:</label>
+                </div>
+                <textarea type="text" id="query_inn" placeholder="ИННы через <enter>" style="resize: none; height: 100px; width: 510px; margin: 5px 5px 10px 0px;"></textarea>
+              </div>
+            </div>
+            <button onclick="frQuery()">отправить запрос</button>
+          </div>
+        </div>
+      </div>
+      <div>
+          <table style="margin: 15px 0px 15px 15px;">
+            <thead>
+              <tr>
+                <th>ИНН</th>
+                <th>Дата</th>
+                <th>Статус</th>
+                <th>Скачать</th>
+              </tr>
+            <thead>
+            <tbody>
+              {% for order in orders %}
+              <tr>
+                <td>{{ order.inn }}</td>
+                <td>{{ order.created_at }}</td>
+                <td>
+                  {% if order.is_ready %}
+                    <b>✔</b>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if order.is_ready %}
+                    <button title="Скачать" style="padding: 5px;" onClick="frDownload('{{ order.inn }}')">
+                      <img width="30" src="{{ url_for('static', path='icon_download.svg') }}" />
+                    </button>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

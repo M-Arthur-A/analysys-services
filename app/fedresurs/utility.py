@@ -1,0 +1,16 @@
+import sys
+
+from app.fedresurs.repo import OrdersFrDAO
+from app.config import settings
+sys.path.append(settings.FR_LIB_PATH)
+from runner import run
+
+
+class Utility:
+
+    @classmethod
+    async def scrap(cls, uid):
+        orders = await OrdersFrDAO.find_all(query_id=uid)
+        for order in orders:
+            run([order.inn])
+            await OrdersFrDAO.update(order.id, status=True)

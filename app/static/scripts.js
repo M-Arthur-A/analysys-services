@@ -143,3 +143,47 @@ async function rrSearch() {
     const hiddenDiv = document.getElementById("rr_search_area");
     hiddenDiv.style.display = 'inline-block';
 }
+
+async function frQuery() {
+    const url = "http://localhost:8000/fr/query";
+    const q_inn = document.getElementById("query_inn").value;
+
+    await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({query: q_inn}),
+    }).then(response => {
+        if (response.status === 200) {
+            window.location.href = "/fr"
+        } else {}
+    });
+}
+
+async function frDownload(query_id, query_inn) {
+    const url = "http://localhost:8000/fr/download";
+    const queryParams = "query_inn=" + query_inn;
+
+    await fetch(url.concat('?', queryParams), {
+        method: 'GET'
+    })
+    .then(res => {
+        const disposition = res.headers.get('Content-Disposition');
+        filename = disposition.split(/;(.+)/)[1].split(/=(.+)/)[1];
+        if (filename.toLowerCase().startsWith("utf-8''"))
+            filename = decodeURIComponent(filename.replace("utf-8''", ''));
+        else
+            filename = filename.replace(/['"]/g, '');
+        return res.blob();
+    })
+    .then(blob => {
+        var url = window.URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    });
+}

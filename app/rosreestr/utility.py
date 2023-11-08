@@ -36,7 +36,7 @@ class Utility:
         org_id  = settings.RR_KR_ORG_ID
 
     tg_channel = settings.TG_RR_CHANNEL_ID
-    tg_bot = settings.TG_BOT
+    tg_bot = settings.TG_BOT_TOKEN
     session = kr_connector(api_key=api_key,
                            org_id=org_id,
                            logger=logger,
@@ -135,8 +135,8 @@ class Utility:
                 cls._zipping(project)
                 await QueriesDAO.update(item_id=order.query_id, is_ready=True)
                 query = await QueriesDAO.find_by_id(model_id=order.query_id)
-                user_name = await UsersDAO.find_by_id(model_id=query['user_id'])
-                message = f"{user_name}, заказ {project} готов"
+                user = await UsersDAO.find_by_id(model_id=query['user_id'])
+                message = f"{user['username'] if user else ''}, заказ <{project}> готов"
                 await cls._telegram_send_to_channel(message)
 
 
@@ -147,7 +147,7 @@ class Utility:
             async with a_session.post(url=URL) as resp:
                 response = await resp.json()
                 if resp.ok:
-                    print('tg sent')
+                    print(f'tg sent to')
                 else:
                     print(f'tg not sent: {response}')
 

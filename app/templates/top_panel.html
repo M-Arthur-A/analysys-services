@@ -2,10 +2,10 @@
   <a href="/" style="padding: 0px 10px 0px 10px; border: None;">
     <img width="50" src="{{ url_for('static', path='logo.svg') }}" />
   </a>
-  <a class="active" href="/rr">Росреестр</a>
-  <a href="/fr">Федресурс</a>
-  <a href="/flight">Перелеты</a>
-  <a href="/london">Недвижимость Лондона</a>
+  <a href="/rr" class={{ "active" if page == "rr.html" else " " }}>Росреестр</a>
+  <a href="/fr" class={{ "active" if page == "fr.html" else " " }}>Федресурс</a>
+  <a href="/flight" class={{ "active" if page == "flight.html" else " " }}>Перелеты</a>
+  <a href="/london" class={{ "active" if page == "london.html" else " " }}>Недвижимость Лондона</a>
   <a href="{{ TG_CHANNEL }}">TG-канал</a>
   <a href="{{ TG_BOT }}">TG-bot</a>
   <!-- <button style="float: right;" onclick="document.getElementById('id01').style.display='block'">Войти</button> -->

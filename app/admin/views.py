@@ -3,6 +3,7 @@ from sqladmin import ModelView, BaseView, expose
 from app.users.models import Users
 from app.rosreestr.query.models import Queries
 from app.rosreestr.query.order.models import Orders
+from app.fedresurs.models import OrdersFr
 
 
 class UsersAdmin(ModelView, model=Users):
@@ -26,6 +27,13 @@ class OrdersAdmin(ModelView, model=Orders):
     name = "Кадастр"
     name_plural = "Кадастры"
     icon = "fa-solid fa-file-lines"
+
+
+class OrdersFrAdmin(ModelView, model=OrdersFr):
+    column_list = [c.name for c in OrdersFr.__table__.c]
+    name = "Торги"
+    name_plural = "Торги"
+    icon = "fa-solid fa-gavel"
 
 
 class MainAdmin(BaseView):

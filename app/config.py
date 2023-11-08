@@ -51,6 +51,7 @@ class Settings(BaseSettings):
     SITE_NAME:  str
 
     TG_BOT:           str
+    TG_BOT_TOKEN:     str
     TG_RR_CHANNEL:    str
     TG_RR_CHANNEL_ID: str
 
@@ -59,6 +60,8 @@ class Settings(BaseSettings):
     TEST_RR_KR_ORG_ID:  str
     RR_KR_API_KEY:      str
     RR_KR_ORG_ID:       str
+
+    FR_LIB_PATH: str
 
     model_config = SettingsConfigDict(env_file=".env", extra='ignore')
 
