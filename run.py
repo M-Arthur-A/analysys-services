@@ -15,6 +15,12 @@ def systemctl_ready_check(service: str) -> bool:
         return True
     return False
 
+def process_ready_check(proc: str) -> bool:
+    proc = subprocess.run(f"pidof {proc}", shell=True, check=False, capture_output=True)
+    status = proc.stdout.decode()
+    if status:
+        return True
+    return False
 
 def restart_systemctl(services: list[str]=['postgresql', 'redis']):
     password = None
@@ -30,6 +36,7 @@ def restart_systemctl(services: list[str]=['postgresql', 'redis']):
                 print(f'\n{service} has started')
             else:
                 raise Exception(f"{service} cant start")
+    return password
 
 
 def restart_celery():
@@ -49,7 +56,19 @@ def restart_server():
                 reload=True)
 
 
+def restart_nginx(password=None):
+    if process_ready_check('nginx'):
+        print('nginx already started')
+    else:
+        if not password:
+            password = getpass.getpass(f'Enter your sudo password (launching nginx)->:')
+        proc = subprocess.Popen('sudo -S /usr/bin/nginx -p . -c nginx.conf', shell=True, stdin=subprocess.PIPE)
+        proc.communicate(password.encode())
+        print("nginx has started")
+
+
 if __name__ == "__main__":
-    restart_systemctl(['postgresql', 'redis'])
+    password = restart_systemctl(['postgresql', 'redis'])
+    restart_nginx(password)
     restart_celery()
     restart_server()
