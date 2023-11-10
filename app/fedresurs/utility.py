@@ -1,4 +1,5 @@
 import sys
+from loguru import logger
 
 from app.fedresurs.repo import OrdersFrDAO
 from app.config import settings
@@ -14,3 +15,4 @@ class Utility:
         for order in orders:
             run([order.inn])
             await OrdersFrDAO.update(order.id, is_ready=True)
+            logger.info(f"fr.utility::торги по {order.inn} сохранены")

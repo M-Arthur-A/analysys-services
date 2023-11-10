@@ -52,15 +52,17 @@ class Utility:
         query_h = [('history', cad) for cad in query.query_h.split('\n')] if query.query_h else []
         for order in query_s + query_h:
             cadastral = cls.session.cadastral_verify(order[1])
+            cadastral_type = order[0]
             await OrdersDAO.add(
                 id=cls.session.get_uid(t='uid'),
                 query_id=query_id,
                 cadastral=cadastral,
-                cadastral_type=order[0],
+                cadastral_type=cadastral_type,
                 status='New',
                 created_at=datetime.now(),
                 modified_at=datetime.now(),
             )
+            logger.info(f"rr.utility::{project}_{cadastral}_{cadastral_type} добавлен в БД")
         return query_id
 
 
@@ -147,9 +149,9 @@ class Utility:
             async with a_session.post(url=URL) as resp:
                 response = await resp.json()
                 if resp.ok:
-                    print(f'tg sent to')
+                    logger.info(f"rr.utility::сообщение отправлено в TG_{text}")
                 else:
-                    print(f'tg not sent: {response}')
+                    logger.error(f"rr.utility::сообщение НЕ отправлено в TG ({text})_{response}")
 
 
     @classmethod
@@ -165,6 +167,7 @@ class Utility:
                 created_at=datetime.now(),
                 modified_at=datetime.now(),
             )
+            logger.info(f"rr.utility::{order.cadastral}_{order.cadastral_type} добавлен в БД")
 
 
 
