@@ -19,10 +19,15 @@ celery.conf.beat_schedule = {
         'task': 'tasks.tasks.rr_monitoring',
         'schedule': 120.0,
     },
-    'clear_folders-after-ten-days': {
+    'rr_clear-folders-after-ten-days': {
         'task': 'tasks.tasks.folder_cleaning',
-        'schedule': crontab(minute=0, hour=0), # каждый день в полночь
+        'schedule': crontab(minute=0, hour=0),
         'args': ('/tmp/rosreestr', 10),
+    },
+    'fr_clear-folders-after-ten-days': {
+        'task': 'tasks.tasks.folder_cleaning',
+        'schedule': crontab(minute=0, hour=1),
+        'args': ('/tmp/fedresurs', 10),
     },
 }
 

@@ -13,4 +13,4 @@ class Utility:
         orders = await OrdersFrDAO.find_all(query_id=uid)
         for order in orders:
             run([order.inn])
-            await OrdersFrDAO.update(order.id, status=True)
+            await OrdersFrDAO.update(order.id, is_ready=True)

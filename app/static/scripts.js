@@ -161,7 +161,7 @@ async function frQuery() {
     });
 }
 
-async function frDownload(query_id, query_inn) {
+async function frDownload(query_inn) {
     const url = "http://localhost:8000/fr/download";
     const queryParams = "query_inn=" + query_inn;
 
