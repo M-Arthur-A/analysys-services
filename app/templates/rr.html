@@ -73,13 +73,13 @@
         </label>
         <div class="tab-content">
           <button title="Скачать" style="padding: 5px;" onClick="rrDownload({{ query.id }},'{{ query.name }}')">
-            <img width="30" src="{{ url_for('static', path='icon_download.svg') }}" />
+            <img width="30" src="static/icon_download.svg" />
           </button>
           <button title="Перезаказать" style="padding: 5px; margin-left: 480px;" onClick="rrReorder({{ query.id }})" />
-            <img width="30" src="{{ url_for('static', path='icon_reorder.svg') }}" />
+            <img width="30" src="static/icon_reorder.svg" />
           </button>
           <button hidden title="Обновить в ручную" style="padding: 5px;" onClick="rrRefresh({{ query.id }})">
-            <img width="30" src="{{ url_for('static', path='icon_refresh.svg') }}" />
+            <img width="30" src="static/icon_refresh.svg" />
           </button>
           <table style="margin-top: 15px;">
             <thead>

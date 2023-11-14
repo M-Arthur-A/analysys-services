@@ -2,6 +2,7 @@ import uvicorn
 import getpass
 import subprocess
 import time
+import sys
 
 from app.config import settings
 
@@ -68,7 +69,10 @@ def restart_nginx(password=None):
 
 
 if __name__ == "__main__":
-    password = restart_systemctl(['postgresql', 'redis'])
-    restart_nginx(password)
+    if not sys.argv[1:]:
+        password = restart_systemctl(['postgresql', 'redis'])
+        restart_nginx(password)
+    else:
+        password = None
     restart_celery()
     restart_server()

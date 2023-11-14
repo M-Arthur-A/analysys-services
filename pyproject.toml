@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "fastapi-server-prj"
+name = "analysys-services"
 version = "0.1.0"
 description = ""
 authors = ["Your Name <you@example.com>"]
 readme = "README.md"
-packages = [{include = "fastapi_server_prj"}]
+packages = [{include = "*"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"

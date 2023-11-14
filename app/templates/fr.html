@@ -43,7 +43,7 @@
                 <td>
                   {% if order.is_ready %}
                     <button title="Скачать" style="padding: 5px;" onClick="frDownload('{{ order.inn }}')">
-                      <img width="30" src="{{ url_for('static', path='icon_download.svg') }}" />
+                      <img width="30" src="static/icon_download.svg" />
                     </button>
                   {% endif %}
                 </td>

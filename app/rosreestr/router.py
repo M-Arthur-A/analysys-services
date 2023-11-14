@@ -2,7 +2,7 @@ from datetime import date
 
 from fastapi import APIRouter, Depends, Request, UploadFile
 from fastapi.encoders import jsonable_encoder
-from fastapi_cache.decorator import cache
+# from fastapi_cache.decorator import cache
 from fastapi.responses import FileResponse
 
 from app.users.models import Users
