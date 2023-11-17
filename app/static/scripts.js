@@ -9,7 +9,8 @@ window.onclick = function(event) {
 
 async function registerUser() {
     const wrongCredentialsSpan = document.getElementById("reg_wrong_credentials");
-    const url = "http://localhost:8000/auth/register";
+    const origin = window.location.origin
+    const url = origin + "/auth/register";
     const username = document.getElementById("reg_uname").value;
     const password = document.getElementById("reg_psw").value;
 
@@ -31,8 +32,8 @@ async function registerUser() {
 async function loginUser() {
     const wrongCredentialsSpan = document.getElementById("wrong_credentials");
     wrongCredentialsSpan.textContent = "";
-
-    const url = "http://localhost:8000/auth/login";
+    const origin = window.location.origin
+    const url = origin + "/auth/login";
     const username = document.getElementById("login_uname").value;
     const password = document.getElementById("login_psw").value;
 
@@ -54,7 +55,8 @@ async function loginUser() {
 }
 
 async function rrDownload(query_id, query_name) {
-    const url = "http://localhost:8000/rr/download";
+    const origin = window.location.origin
+    const url = origin + "/rr/download";
     const queryParams = "query_id=" + query_id + "&query_name=" + query_name;
 
     await fetch(url.concat('?', queryParams), {
@@ -81,7 +83,8 @@ async function rrDownload(query_id, query_name) {
 }
 
 async function rrReorder(query_id) {
-    const url = "http://localhost:8000/rr/reorder";
+const origin = window.location.origin
+    const url = origin + "/rr/reorder";
     var realy = window.confirm("Вы уверены, что хотите перезаказать все неготовые кадастровые номера?");
     if (realy) {
         await fetch(url, {
@@ -96,7 +99,8 @@ async function rrReorder(query_id) {
 }
 
 async function rrQuery() {
-    const url = "http://localhost:8000/rr/query";
+    const origin = window.location.origin
+    const url = origin + "/rr/query";
     const project = document.getElementById("prj_name").value;
     const q_simple = document.getElementById("query_s").value;
     const q_history = document.getElementById("query_h").value;
@@ -115,7 +119,8 @@ async function rrQuery() {
 }
 
 async function rrRefresh(query_id) {
-    const url = "http://localhost:8000/rr/refresh";
+    const origin = window.location.origin
+    const url = origin + "/rr/refresh";
     await fetch(url, {
         method: 'POST',
         headers: {
@@ -127,7 +132,8 @@ async function rrRefresh(query_id) {
 
 async function rrSearch() {
     const query = document.getElementById("rrSearchQuery").value;
-    const url = "http://localhost:8000/rr/find"
+    const origin = window.location.origin
+    const url = origin + "/rr/find"
     const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -145,7 +151,8 @@ async function rrSearch() {
 }
 
 async function frQuery() {
-    const url = "http://localhost:8000/fr/query";
+    const origin = window.location.origin
+    const url = origin + "/fr/query";
     const q_inn = document.getElementById("query_inn").value;
 
     await fetch(url, {
@@ -162,7 +169,8 @@ async function frQuery() {
 }
 
 async function frDownload(query_inn) {
-    const url = "http://localhost:8000/fr/download";
+    const origin = window.location.origin
+    const url = origin + "/fr/download";
     const queryParams = "query_inn=" + query_inn;
 
     await fetch(url.concat('?', queryParams), {
