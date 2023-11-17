@@ -85,8 +85,8 @@ class Utility:
             await OrdersDAO.update(
                 item_id=order.id,
                 session_id=result['session_id'],
-                status=result['status'],
-                status_txt=result['status_txt'],
+                status=str(result['status']),
+                status_txt=str(result['status_txt']),
                 created_at=datetime.strptime(result['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ'),
                 modified_at=datetime.strptime(result['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ'),
             )
@@ -110,8 +110,8 @@ class Utility:
             )
             await OrdersDAO.update(
                 item_id=order.id,
-                status=result['new_status'],
-                status_txt=result['new_status_txt'],
+                status=str(result['new_status']),
+                status_txt=str(result['new_status_txt']),
                 modified_at=result['modified_at'],
             )
 
