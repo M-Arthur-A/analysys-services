@@ -132,7 +132,7 @@ class Utility:
                     is_ready=True,
                 )
 
-            if await QueriesDAO.is_all_ready(query_id=order.query_id):
+            if not query_id and await QueriesDAO.is_all_ready(query_id=order.query_id):
                 cls._analyze(project)
                 cls._zipping(project)
                 await QueriesDAO.update(item_id=order.query_id, is_ready=True)
@@ -140,6 +140,13 @@ class Utility:
                 user = await UsersDAO.find_by_id(model_id=query['user_id'])
                 message = f"{user['username'] if user else ''}, заказ <{project}> готов"
                 await cls._telegram_send_to_channel(message)
+
+        if query_id:
+            project = await QueriesDAO.get_name(query_id=order.query_id)
+            cls._analyze(project)
+            cls._zipping(project)
+            message = f"заказ <{project}> готов"
+            await cls._telegram_send_to_channel(message)
 
 
     @classmethod

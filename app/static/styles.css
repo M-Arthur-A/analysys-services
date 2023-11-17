@@ -265,7 +265,7 @@ input[type=checkbox] {
   transform: rotate(90deg);
 }
  input:checked ~ .tab-content {
-  max-height: 100vh;
+  max-height: 1000vh;
   padding: 1em;
 }
 
