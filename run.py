@@ -54,6 +54,8 @@ def restart_server():
     uvicorn.run("app.main:app",
                 host=settings.APP_HOST,
                 port=settings.APP_PORT,
+                proxy_headers=True,
+                forwarded_allow_ips='*',
                 reload=True)
 
 
