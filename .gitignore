@@ -1,5 +1,6 @@
 *.svg
 *.log
+*.ttf
 .env
 flask-server.py
 __pycache__
