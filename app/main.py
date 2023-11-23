@@ -46,9 +46,7 @@ admin.add_view(OrdersAdmin)
 admin.add_view(OrdersFrAdmin)
 
 origins = [
-    "http://localhost:3000", # 3000 - порт, на котором работает фронтенд на React.js
-    "http://0.0.0.0:8000/",
-    '*',
+    "http://localhost:8000",
 ]
 
 app.add_middleware(
