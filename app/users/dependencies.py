@@ -8,7 +8,7 @@ from app.exceptions import IncorrectTokenFormatException, TokenAbsentException, 
 
 
 def get_token(request: Request):
-    token = request.cookies.get("booking_access_token")
+    token = request.cookies.get("analyst_access_token")
     if not token:
         raise TokenAbsentException
     return token

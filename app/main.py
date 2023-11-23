@@ -1,4 +1,3 @@
-import uvicorn
 from sqladmin import Admin
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.staticfiles import StaticFiles

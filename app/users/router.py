@@ -34,12 +34,12 @@ async def login_user(response: Response, user_data: SUserAuth):
     if not user.activated:
         raise UserIsNotActivatedException
     access_token = create_access_token({'sub': str(user.id)})
-    response.set_cookie("booking_access_token", access_token, httponly=True)
+    response.set_cookie("analyst_access_token", access_token, httponly=True)
     return access_token
 
 @router.post("/logout")
 async def logout_user(response: Response):
-    response.delete_cookie("booking_access_token")
+    response.delete_cookie("analyst_access_token")
 
 @router.get("/me")
 async def read_users_me(current_user: Users = Depends(get_current_user)):
