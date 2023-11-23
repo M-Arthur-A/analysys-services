@@ -3,7 +3,7 @@ from fastapi.templating import Jinja2Templates
 
 from app.rosreestr.router import get_queries as rr_get_queries
 from app.fedresurs.router import get_queries as fr_get_queries
-from app.exceptions import IncorrectTokenFormatException
+from app.exceptions import IncorrectTokenFormatException, TokenAbsentException
 from app.config import settings
 
 
@@ -69,4 +69,5 @@ async def error_handler(request: Request, exc: HTTPException):
 
 
 def include_exception_handler(app):
-	app.add_exception_handler(IncorrectTokenFormatException, error_handler)
+    app.add_exception_handler(IncorrectTokenFormatException, error_handler)
+    app.add_exception_handler(TokenAbsentException, error_handler)

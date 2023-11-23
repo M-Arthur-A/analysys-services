@@ -22,7 +22,7 @@ class TokenExpiredException(AppException):
 
 class TokenAbsentException(AppException):
     status_code=status.HTTP_401_UNAUTHORIZED
-    detail="Токен отсутствует"
+    detail="Токен отсутствует: требуется залогиниться"
 
 class IncorrectTokenFormatException(AppException):
     status_code=status.HTTP_401_UNAUTHORIZED
