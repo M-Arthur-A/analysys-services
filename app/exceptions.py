@@ -26,7 +26,7 @@ class TokenAbsentException(AppException):
 
 class IncorrectTokenFormatException(AppException):
     status_code=status.HTTP_401_UNAUTHORIZED
-    detail="Неверный формат токена"
+    detail="Неверный формат токена: требуется залогиниться"
 
 class UserIsNotPresentException(AppException):
     status_code=status.HTTP_401_UNAUTHORIZED

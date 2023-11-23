@@ -1,10 +1,10 @@
 import uvicorn
 from sqladmin import Admin
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.pages.router import router as router_pages
+from app.pages.router import router as router_pages, include_exception_handler, error_404_handler
 from app.users.router import router as router_users
 from app.rosreestr.router import router as router_rosreestr
 from app.fedresurs.router import router as router_fedresurs
@@ -23,6 +23,16 @@ app.include_router(router_fedresurs)
 app.include_router(router_rosreestr)
 app.include_router(router_users)
 app.include_router(router_pages)
+
+include_exception_handler(app)
+
+@app.exception_handler(404)
+async def error_404(request: Request, exc: HTTPException):
+    return await error_404_handler(request, exc)
+
+@app.exception_handler(500)
+async def error_500(request: Request, exc: HTTPException):
+    return await error_404_handler(request, exc)
 
 admin = Admin(app, engine,
               authentication_backend=authentication_backend,

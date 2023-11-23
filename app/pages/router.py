@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Request, Depends
+from fastapi import APIRouter, Request, Depends, HTTPException
 from fastapi.templating import Jinja2Templates
 
 from app.rosreestr.router import get_queries as rr_get_queries
 from app.fedresurs.router import get_queries as fr_get_queries
+from app.exceptions import IncorrectTokenFormatException
 from app.config import settings
 
 
@@ -45,3 +46,27 @@ async def fedresurs_page(request: Request, queries = Depends(fr_get_queries)):
                                             "orders": queries,
                                             }
                                       )
+
+async def error_404_handler(request: Request, exc: HTTPException):
+    return templates.TemplateResponse("template.html", {
+                                            "page": "error.html",
+                                            "SITE_NAME": settings.SITE_NAME,
+                                            "top_panel": None,
+                                            "request": request,
+                                            "error": exc,
+                                            }
+                                      )
+
+async def error_handler(request: Request, exc: HTTPException):
+    return templates.TemplateResponse("template.html", {
+                                            "page": "error.html",
+                                            "SITE_NAME": settings.SITE_NAME,
+                                            "top_panel": None,
+                                            "request": request,
+                                            "error": exc,
+                                            }
+                                      )
+
+
+def include_exception_handler(app):
+	app.add_exception_handler(IncorrectTokenFormatException, error_handler)
