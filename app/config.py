@@ -60,6 +60,7 @@ class Settings(BaseSettings):
     TEST_RR_KR_ORG_ID:  str
     RR_KR_API_KEY:      str
     RR_KR_ORG_ID:       str
+    RR_STORAGE:         str
 
     FR_LIB_PATH: str
 

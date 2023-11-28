@@ -40,6 +40,7 @@ class Utility:
     session = kr_connector(api_key=api_key,
                            org_id=org_id,
                            logger=logger,
+                           dir_path=settings.RR_STORAGE,
                            url_type=settings.MODE,
                           )
 
