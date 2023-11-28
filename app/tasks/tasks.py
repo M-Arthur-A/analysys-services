@@ -55,14 +55,25 @@ def rr_monitoring():
 @celery.task
 def folder_cleaning(path: str, days_expire: int):
     for (root, dirs, files) in os.walk(path, topdown=True):
-       for f in files:
-           file_path = os.path.join(root,f)
-           timestamp_of_file_modified = os.path.getmtime(file_path)
-           modification_date = datetime.fromtimestamp(timestamp_of_file_modified)
-           number_of_days = (datetime.now() - modification_date).days
-           if number_of_days > days_expire:
-               os.remove(file_path)
-               logger.info(f" {days_expire} left, {f} has been deleted")
+        # old files deletion
+        for f in files:
+            file_path = os.path.join(root,f)
+            timestamp_of_file_modified = os.path.getmtime(file_path)
+            modification_date = datetime.fromtimestamp(timestamp_of_file_modified)
+            number_of_days = (datetime.now() - modification_date).days
+            if number_of_days > days_expire:
+                os.remove(file_path)
+                logger.info(f" {days_expire} left, {f} has been deleted")
+        # empty folder deletion
+        deleted = set()
+        still_has_subdirs = False
+        for subdir in dirs:
+            if os.path.join(root, subdir) not in deleted:
+                still_has_subdirs = True
+                break
+        if not any(files) and not still_has_subdirs:
+            os.rmdir(root)
+            deleted.add(root)
 
 
 @celery.task(name="fr_running")
