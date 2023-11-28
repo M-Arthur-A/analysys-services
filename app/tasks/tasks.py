@@ -9,6 +9,7 @@ from celery.utils.log import get_task_logger
 from app.tasks.celery import celery
 from app.rosreestr.utility import Utility as rr_utility
 from app.fedresurs.utility import Utility as fr_utility
+from app.config import settings
 
 
 
@@ -22,12 +23,12 @@ celery.conf.beat_schedule = {
     'rr_clear-folders-after-ten-days': {
         'task': 'tasks.tasks.folder_cleaning',
         'schedule': crontab(minute=0, hour=0),
-        'args': ('/tmp/rosreestr', 10),
+        'args': (settings.RR_STORAGE, 10),
     },
     'fr_clear-folders-after-ten-days': {
         'task': 'tasks.tasks.folder_cleaning',
         'schedule': crontab(minute=0, hour=1),
-        'args': ('/tmp/fedresurs', 10),
+        'args': (settings.FR_STORAGE, 10),
     },
 }
 

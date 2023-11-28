@@ -63,6 +63,7 @@ class Settings(BaseSettings):
     RR_STORAGE:         str
 
     FR_LIB_PATH: str
+    FR_STORAGE:  str
 
     model_config = SettingsConfigDict(env_file=".env", extra='ignore')
 

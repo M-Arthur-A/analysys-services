@@ -13,6 +13,6 @@ class Utility:
     async def scrap(cls, uid):
         orders = await OrdersFrDAO.find_all(query_id=uid)
         for order in orders:
-            run([order.inn])
+            run([order.inn], settings.FR_STORAGE)
             await OrdersFrDAO.update(order.id, is_ready=True)
             logger.info(f"fr.utility::торги по {order.inn} сохранены")
