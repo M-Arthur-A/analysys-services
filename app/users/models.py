@@ -5,6 +5,7 @@ from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from app.database import Base
 from app.rosreestr.query.models import Queries
+from app.rosreestr.monitoring.models import Monitorings
 from app.fedresurs.models import OrdersFr
 
 
@@ -19,8 +20,9 @@ class Users(Base):
     created_at:      Mapped[datetime] = mapped_column(Date, nullable=True)
     activated:       Mapped[bool] = mapped_column(nullable=False)
 
-    queries:   Mapped[list['Queries']]  = relationship(back_populates="user")
-    fr_orders: Mapped[list['OrdersFr']] = relationship(back_populates="user")
+    queries:     Mapped[list['Queries']]  = relationship(back_populates="user")
+    monitorings: Mapped[list['Monitorings']]  = relationship(back_populates="user")
+    fr_orders:   Mapped[list['OrdersFr']] = relationship(back_populates="user")
 
     def __str__(self):
         return f"User {self.username}"

@@ -44,6 +44,20 @@ button:hover {
   background-color: #eee;
   color: gray;
 }
+button img{
+  filter: invert(50%);
+}
+button:hover img{
+  filter: invert(70%);
+}
+button:active {
+  box-shadow: inset 0 4px 8px 0 rgba(0,0,0,0.2);
+  transform: translateY(2px);
+}
+.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 input[type=submit] {
   border-radius: 12px;
   background-color: #eee;
@@ -77,6 +91,10 @@ input[type=password] {
   border-radius: 12px;
   padding: 15px 5px;
   width: 259px;
+}
+input[type=number] {
+  border-radius: 12px;
+  padding: 2px 5px 2px 5px;
 }
 textarea {
   border-radius: 12px;

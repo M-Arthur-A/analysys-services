@@ -2,6 +2,8 @@ from fastapi import APIRouter, Request, Depends, HTTPException
 from fastapi.templating import Jinja2Templates
 
 from app.rosreestr.router import get_queries as rr_get_queries
+from app.rosreestr.router import get_monitorings as rr_get_monitorings
+from app.rosreestr.router import get_balance as rr_get_balance
 from app.fedresurs.router import get_queries as fr_get_queries
 from app.exceptions import IncorrectTokenFormatException, TokenAbsentException
 from app.config import settings
@@ -22,7 +24,12 @@ async def login_page(request: Request):
                                                         })
 
 @router.get('/rr')
-async def rosreestr_page(request: Request, queries = Depends(rr_get_queries)):
+async def rosreestr_page(
+        request: Request,
+        queries = Depends(rr_get_queries),
+        monitorings = Depends(rr_get_monitorings),
+        balance = Depends(rr_get_balance)
+):
     return templates.TemplateResponse('template.html', {
                                             "page": "rr.html",
                                             "SITE_NAME": settings.SITE_NAME,
@@ -31,6 +38,8 @@ async def rosreestr_page(request: Request, queries = Depends(rr_get_queries)):
                                             "request": request,
                                             "top_panel": "top_panel.html",
                                             "queries": queries,
+                                            "monitorings": monitorings,
+                                            "balance": balance,
                                             }
                                       )
 

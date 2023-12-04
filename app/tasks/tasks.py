@@ -20,6 +20,14 @@ celery.conf.beat_schedule = {
         'task': 'tasks.tasks.rr_monitoring',
         'schedule': 120.0,
     },
+    'rr_check_mon-every-two-min': {
+        'task': 'tasks.tasks.rr_monitoring_mon',
+        'schedule': 120.0,
+    },
+    'rr_check_balance-every-hour': {
+        'task': 'tasks.tasks.rr_balance_check',
+        'schedule': 3600.0,
+    },
     'rr_clear-folders-after-ten-days': {
         'task': 'tasks.tasks.folder_cleaning',
         'schedule': crontab(minute=0, hour=0),
@@ -51,6 +59,10 @@ def rr_monitoring():
     loop = asyncio.get_event_loop()
     loop.run_until_complete(rr_utility.check_orders())
 
+@celery.task
+def rr_balance():
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(rr_utility.check_balance())
 
 @celery.task
 def folder_cleaning(path: str, days_expire: int):
@@ -80,3 +92,15 @@ def folder_cleaning(path: str, days_expire: int):
 def fr_run(uid: str):
     loop = asyncio.get_event_loop()
     loop.run_until_complete(fr_utility.scrap(uid))
+
+
+@celery.task(name="rr_quering_mon")
+def rr_adding_mon():
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(rr_utility.query_mon())
+
+
+@celery.task
+def rr_monitoring_mon():
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(rr_utility.check_monitorings())

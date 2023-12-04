@@ -1,8 +1,9 @@
 from sqladmin import ModelView, BaseView, expose
 
 from app.users.models import Users
-from app.rosreestr.query.models import Queries
+from app.rosreestr.query.models import Queries, Balance
 from app.rosreestr.query.order.models import Orders
+from app.rosreestr.monitoring.models import Monitorings
 from app.fedresurs.models import OrdersFr
 
 
@@ -27,6 +28,20 @@ class OrdersAdmin(ModelView, model=Orders):
     name = "Кадастр"
     name_plural = "Кадастры"
     icon = "fa-solid fa-file-lines"
+
+
+class MonitoringsAdmin(ModelView, model=Monitorings):
+    column_list = [c.name for c in Orders.__table__.c] + [Orders.query]
+    name = "Мониторинг"
+    name_plural = "Мониторинги"
+    icon = "fa-solid fa-newspaper"
+
+
+class BalanceAdmin(ModelView, model=Balance):
+    column_list = [c.name for c in Balance.__table__.c]
+    name = "Баланс"
+    name_plural = "Балансы"
+    icon = "fa-solid fa-scale-unbalanced"
 
 
 class OrdersFrAdmin(ModelView, model=OrdersFr):

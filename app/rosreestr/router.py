@@ -5,14 +5,17 @@ from fastapi.encoders import jsonable_encoder
 # from fastapi_cache.decorator import cache
 from fastapi.responses import FileResponse
 
+from app.config import settings
 from app.users.models import Users
 from app.users.dependencies import get_current_user
 from app.rosreestr.query.models import Queries
-from app.rosreestr.query.repo import QueriesDAO
+from app.rosreestr.query.repo import BalanceDAO, QueriesDAO
+from app.rosreestr.monitoring.repo import MonitoringsDAO
 from app.rosreestr.query.order.models import Orders
 from app.rosreestr.schemas import SOrders, SQuery, SReorder, SDownload, SSearch
+from app.rosreestr.monitoring.schemas import SOrderMon
 from app.rosreestr.utility import Utility
-from app.tasks.tasks import rr_adding
+from app.tasks.tasks import rr_adding, rr_adding_mon
 
 router = APIRouter(prefix="/rr",
                    tags=['Росреестр'])
@@ -60,7 +63,7 @@ async def add(query: SQuery,
 @router.get('/download')
 async def download(query_id: int, query_name: str):
     await Utility.prepare_for_download(query_id, query_name)
-    return FileResponse(path=f'/tmp/rosreestr/{query_name}.zip',
+    return FileResponse(path=f'{settings.RR_STORAGE}/{query_name}.zip',
                         filename=query_name+'.zip',
                         media_type='application/zip')
 
@@ -89,3 +92,25 @@ async def delete(query_id: int):
 @router.get('/create')
 async def create_if_not():
     rr_adding.delay()
+
+@router.get('/balance')
+async def get_balance():
+    return await BalanceDAO.get_actual()
+
+@router.get('/checkbalance')
+async def check_balance():
+    return await Utility.check_balance()
+
+@router.post('/monitoringquery')
+async def add_mon(query: SOrderMon,
+                  current_user: Users = Depends(get_current_user)):
+    await Utility.add_mon(
+        query=query,
+        user_id=current_user.id
+    )
+    # send task to celery
+    # rr_adding_mon.delay()
+
+@router.get('/monitors')
+async def get_monitorings(current_user: Users = Depends(get_current_user)) -> list[dict]:
+    return await MonitoringsDAO.find_all(user_id=current_user.id)

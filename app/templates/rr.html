@@ -4,7 +4,7 @@
     <div class="tabs">
       <div class="tab">
         <input type="checkbox" id="chck1">
-        <label class="tab-label" for="chck1" style="background: linear-gradient(45deg, #eee, #ffffff);">Разместить заказ</label>
+        <label class="tab-label" for="chck1" style="background: linear-gradient(45deg, #eee, #ffffff);">Добавить</label>
         <div class="tab-content">
           <div class="info">
             <h2>Заказ</h2>
@@ -27,22 +27,26 @@
               </div>
             </div>
             <button onclick="rrQuery()">отправить запрос</button>
+            <span style="margin-left: 10px;">доступно {{ balance }} выписок</span>
           </div>
-
-          <hr hidden>
-          <div class="info" hidden>
-            <h2>Заказ файлом</h2>
-            <p>Прикрепите .xlsx-файл без заголовка с 3 колонками:</p>
-            <p>&nbsp;&nbsp;&nbsp;&nbsp;- идентификатор;</p>
-            <p>&nbsp;&nbsp;&nbsp;&nbsp;- кадастровый номер;</p>
-            <p>&nbsp;&nbsp;&nbsp;&nbsp;- тип выписки: simple или history</p>
-            <form action="/rr/upload" method="post" enctype="multipart/form-data">
-              <input type=file name=file>
-              <input type=submit value="создать запрос">
-            </form>
+          <hr>
+          <div class="info">
+            <h2>Постановка на мониторинг</h2>
+            <div>
+              <input type="text"   id="monitoring_cadastral" placeholder="XX:XX:XXXXXXX:XX" style="height: 10px; width: 140px; margin: 0px 0px 10px 0px;">
+              <input type="text" id="prj_name_mon" placeholder="Проект - опционально" style="height: 10px; width: 350px; margin: 10px 0px 0px 0px;">
+            </div>
+            <div style="display: flex;">
+              <button onclick="rrMonQuery()" style="width: 240px; margin-right: 10px;">отправить запрос</button>
+              <div>
+                <input style="width: 180px;" type="number" id="monitoring_intense" name="intense" min="2" max="24" placeholder="периодичность,ч."/>
+                <input style="width: 180px;" type="number" id="monitoring_duration" name="duration" min="1" max="1000" placeholder="продолжетильность,мес."/>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
       <div hidden class="tab">
         <input type="checkbox" id="chck2">
         <label class="tab-label" for="chck2" style="background: linear-gradient(45deg, #eee, #ffffff);">Поиск недвижимости</label>
@@ -62,6 +66,46 @@
           </div>
         </div>
       </div>
+
+      <div class="tab">
+        <input type="checkbox" id="monitoring">
+        <label class="tab-label" for="monitoring" style="display: block; text-align: right; background: linear-gradient(45deg, #ffffff, #eee);">На мониторинге</label>
+        <div class="tab-content">
+          <div class="info">
+            <h2>Мониторинг</h2>
+            <table style="margin: 15px 0px 15px 15px; font-size: 10px;">
+              <thead>
+                <tr>
+                  <th>Кадастровый №</th>
+                  <th>Проект</th>
+                  <th>Дата c</th>
+                  <th>Дата по</th>
+                  <th>Интер- вал, ч</th>
+                  <th>Статус</th>
+                  <th>Удалить</th>
+                </tr>
+              <thead>
+              <tbody>
+                {% for monitoring in monitorings %}
+                <tr>
+                  <td>{{ monitoring.cadastral }}</td>
+                  <td>{{ monitoring.tag }}</td>
+                  <td>{{ monitoring.start_at }}</td>
+                  <td>{{ monitoring.end_at }}</td>
+                  <td>{{ monitoring.interval }}</td>
+                  <td>{{ monitoring.status }}</td>
+                  <td>
+                    <button onclick="rrCancelMon('{{ monitoring.cadastral }}')" style="font-size: 8px; padding: 4px;">❌</button>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+
       {% for query in queries %}
       <div class="tab">
         <input type="checkbox" id="{{query.id}}">

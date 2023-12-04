@@ -8,7 +8,7 @@ from app.users.router import router as router_users
 from app.rosreestr.router import router as router_rosreestr
 from app.fedresurs.router import router as router_fedresurs
 from app.database import engine
-from app.admin.views import UsersAdmin, QueriesAdmin, OrdersAdmin, MainAdmin, CeleryAdmin, OrdersFrAdmin
+from app.admin.views import UsersAdmin, QueriesAdmin, OrdersAdmin, MainAdmin, CeleryAdmin, OrdersFrAdmin, MonitoringsAdmin, BalanceAdmin
 from app.admin.auth import authentication_backend
 
 
@@ -42,6 +42,8 @@ admin.add_view(CeleryAdmin)
 admin.add_view(UsersAdmin)
 admin.add_view(QueriesAdmin)
 admin.add_view(OrdersAdmin)
+admin.add_view(MonitoringsAdmin)
+admin.add_view(BalanceAdmin)
 admin.add_view(OrdersFrAdmin)
 
 origins = [

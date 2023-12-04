@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import ForeignKey, Date
+from sqlalchemy import ForeignKey, Date, UniqueConstraint
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from app.database import Base
@@ -21,3 +21,15 @@ class Queries(Base):
 
     def __str__(self):
         return f"query #{self.id} {self.name}"
+
+
+class Balance(Base):
+    """
+    name: last | history (every day)
+    """
+    __tablename__ = "rr_balance"
+
+    id:    Mapped[int] = mapped_column(primary_key=True)
+    value: Mapped[int] = mapped_column(nullable=False)
+    date:  Mapped[str] = mapped_column(nullable=False)
+    __table_args__ = (UniqueConstraint("date", name="rr_balance_date_key"),)

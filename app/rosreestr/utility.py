@@ -16,11 +16,13 @@ from loguru import logger
 from fastapi import File
 import pandas as pd
 
-from app.rosreestr.query.repo import QueriesDAO
+from app.rosreestr.query.repo import QueriesDAO, BalanceDAO
 from app.rosreestr.query.order.repo import OrdersDAO
+from app.rosreestr.monitoring.repo import MonitoringsDAO
 from app.users.repo import UsersDAO
 from app.rosreestr.query.order.models import Orders
 from app.rosreestr.schemas import SDownload, SQuery
+from app.rosreestr.monitoring.schemas import SOrderMon
 from app.users.models import Users # need for celery detection
 from app.config import settings
 sys.path.append(settings.RR_API_LIB_PATH)
@@ -246,7 +248,7 @@ class Utility:
             logger.info(f"rr.utility::{project}_{cadastral}_{cadastral_type} распарсен")
 
             name = f'{"-".join(cadastral.split(":"))}_{cadastral_type}.xlsx'
-            file_name = f'{cls.session.dir_path}{project}/{name}'
+            file_name = f'{cls.session.dir_path}/{project}/{name}'
             df[cols_to_save].to_excel(file_name)
             logger.info(f"rr.utility::{project}_{cadastral}_{cadastral_type} сохранен")
         except Exception as e:
@@ -255,7 +257,7 @@ class Utility:
 
     @classmethod
     def _zipping(cls, project: str):
-        paths = f'{cls.session.dir_path}{project}/'
+        paths = f'{cls.session.dir_path}/{project}/'
         zip_files = gb(paths + '*.zip')
         for zip_file in zip_files:
             folder = '/'.join(zip_file.split('/')[:-1]) + '/'
@@ -267,10 +269,10 @@ class Utility:
         pdf_files = gb(paths + '*.pdf')
 
         # компануем pdf и итоговый xlsx в итоговый zip
-        zip_result = ZipFile(f'{cls.session.dir_path}{project}.zip', 'w')
+        zip_result = ZipFile(f'{cls.session.dir_path}/{project}.zip', 'w')
         for pdf_file in pdf_files:
             zip_result.write(pdf_file, pdf_file.split('/')[-1])
-        zip_result.write(f'{cls.session.dir_path}{project}.xlsx', project+'.xlsx')
+        zip_result.write(f'{cls.session.dir_path}/{project}.xlsx', project+'.xlsx')
         zip_result.close()
 
 
@@ -290,7 +292,7 @@ class Utility:
                 return ru_dict[col] if col in ru_dict.keys() else col
 
         logger.debug(f'starting to concat excels of <{project}>')
-        file_name = f'{cls.session.dir_path}{project}'
+        file_name = f'{cls.session.dir_path}/{project}'
         d_files = gb(f'{file_name}/*.xlsx')
         # if os.path.isfile(file_name + '.xlsx'):
             # file_name = f'{file_name}_{time.time_ns()}'
@@ -424,3 +426,56 @@ class Utility:
         else:
             logger.debug(f'List dataset of <{project}> cant be done because of history is missing')
         writer.close()
+
+
+    @classmethod
+    async def add_mon(cls, query: SOrderMon, user_id: int) -> int:
+        project = cls.session.get_project(query.project)
+        cadastral = cls.session.cadastral_verify(query.monitoring_cadastral)
+        query_id = await MonitoringsDAO.add(
+            project=project,
+            cadastral=cadastral,
+            monitoring_intense=query.monitoring_intense,
+            monitoring_duration=query.monitoring_duration,
+            user_id=user_id
+        )
+        logger.info(f"rr.utility::{project}_{cadastral} добавлен в БД для мониторинга")
+        return query_id
+
+
+    @classmethod
+    async def query_mon(cls):
+        """
+        for celery
+        """
+        orders = await OrdersDAO.find_all(status='New')
+        for order in orders if orders else ():
+            result = await cls.session.start_monitor(
+                cadastral=order.cadastral,
+                start_date=order.start_at,
+                end_date=order.end_at,
+                interval_h=order.interval
+            )
+            await OrdersDAO.update(
+                item_id=order.id,
+                status=str(result['status']),
+                status_txt=str(result['status_txt']),
+                monitoringId=str(result['monitoring_id']),
+                modified_at=datetime.strptime(result['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ'),
+            )
+
+
+    @classmethod
+    async def check_monitorings(cls):
+        """
+        for celery
+        """
+        pass
+
+    @classmethod
+    async def check_balance(cls):
+        """
+        for celery
+        """
+        balance = await cls.session.get_balance()
+        await BalanceDAO.add(balance)

@@ -195,3 +195,25 @@ async function frDownload(query_inn) {
         a.remove();
     });
 }
+
+async function rrMonQuery() {
+    const origin = window.location.origin
+    const url = origin + "/rr/monitoringquery";
+
+    const prj = document.getElementById("prj_name_mon").value;
+    const mon_cadastral = document.getElementById("monitoring_cadastral").value;
+    const mon_intense = document.getElementById("monitoring_intense").value;
+    const mon_duration = document.getElementById("monitoring_duration").value;
+
+    await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({project: prj, monitoring_cadastral: mon_cadastral, monitoring_intense: mon_intense, monitoring_duration: mon_duration}),
+    }).then(response => {
+        if (response.status === 200) {
+            window.location.href = "/rr"
+        } else {}
+    });
+}
