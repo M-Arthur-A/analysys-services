@@ -325,6 +325,12 @@ table {
  tbody td {
   position: relative;
 }
+ #monTable tr td {
+  padding: 5px;
+}
+ #monTable tr th {
+  padding: 5px;
+}
  tbody td:hover:before {
   content: "";
   position: absolute;
