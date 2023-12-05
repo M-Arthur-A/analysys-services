@@ -25,7 +25,7 @@ celery.conf.beat_schedule = {
         'schedule': 120.0,
     },
     'rr_check_balance-every-hour': {
-        'task': 'tasks.tasks.rr_balance_check',
+        'task': 'tasks.tasks.rr_balance',
         'schedule': 3600.0,
     },
     'rr_clear-folders-after-ten-days': {
