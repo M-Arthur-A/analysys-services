@@ -5,6 +5,7 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, Request, UploadFile
 from fastapi.responses import FileResponse
 
+from app.config import settings
 from app.users.models import Users
 from app.users.dependencies import get_current_user
 from app.fedresurs.schemas import SQuery
@@ -57,7 +58,7 @@ async def add(queries: SQuery,
 @router.get('/download')
 async def download(query_inn: str):
     return FileResponse(
-        path=f'/tmp/fedresurs/{query_inn}.xlsx',
+        path=f'{settings.FR_STORAGE}/{query_inn}.xlsx',
         filename=query_inn+'.xlsx',
         media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
