@@ -37,10 +37,14 @@
               <input type="text" id="prj_name_mon" maxlength="20" placeholder="Проект - опционально" style="height: 10px; width: 350px; margin: 10px 0px 0px 0px;">
             </div>
             <div style="display: flex;">
-              <button onclick="rrMonQuery()" style="width: 240px; margin-right: 10px;">отправить запрос</button>
+              <button onclick="rrMonQuery()" style="width: 240px; margin-right: 10px; padding: 5px 32px;">отправить запрос</button>
               <div>
                 <input style="width: 180px;" type="number" id="monitoring_intense" name="intense" min="12" max="24" placeholder="периодичность (>=24),ч."/>
                 <input style="width: 180px;" type="number" id="monitoring_duration" name="duration" min="1" max="1000" placeholder="продолжетильность,мес."/>
+              </div>
+              <div>
+                <label>доступно</label>
+                <label>{{ balance_mon }} шт.</label>
               </div>
             </div>
           </div>

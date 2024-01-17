@@ -488,5 +488,9 @@ class Utility:
         balance = await cls.session.get_balance()
         if 'orders' in balance.keys():
             await BalanceDAO.add(balance['orders'])
+        else:
+            await BalanceDAO.add(0)
         if 'monitoring' in balance.keys():
             await BalanceMonDAO.add(balance['monitoring'])
+        else:
+            await BalanceMonDAO.add(0)

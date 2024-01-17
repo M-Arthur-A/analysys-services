@@ -9,7 +9,7 @@ from app.config import settings
 from app.users.models import Users
 from app.users.dependencies import get_current_user
 from app.rosreestr.query.models import Queries
-from app.rosreestr.query.repo import BalanceDAO, QueriesDAO
+from app.rosreestr.query.repo import BalanceDAO, BalanceMonDAO, QueriesDAO
 from app.rosreestr.monitoring.repo import MonitoringsDAO
 from app.rosreestr.query.order.models import Orders
 from app.rosreestr.schemas import SOrders, SQuery, SReorder, SDownload, SSearch
@@ -96,6 +96,10 @@ async def create_if_not():
 @router.get('/balance')
 async def get_balance():
     return await BalanceDAO.get_actual()
+
+@router.get('/balancemon')
+async def get_balance_mon():
+    return await BalanceMonDAO.get_actual()
 
 @router.get('/checkbalance')
 async def check_balance():

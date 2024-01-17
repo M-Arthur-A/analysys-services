@@ -39,6 +39,7 @@ button {
   text-align: center;
   text-decoration: none;
   font-size: 16px;
+  cursor: pointer;
 }
 button:hover {
   background-color: #eee;
