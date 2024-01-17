@@ -97,7 +97,7 @@ def fr_run(uid: str):
 @celery.task(name="rr_quering_mon")
 def rr_adding_mon():
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(rr_utility.query_mon())
+    loop.run_until_complete(rr_utility.query_monitorings())
 
 
 @celery.task

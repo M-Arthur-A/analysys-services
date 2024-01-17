@@ -33,3 +33,15 @@ class Balance(Base):
     value: Mapped[int] = mapped_column(nullable=False)
     date:  Mapped[str] = mapped_column(nullable=False)
     __table_args__ = (UniqueConstraint("date", name="rr_balance_date_key"),)
+
+
+class BalanceMon(Base):
+    """
+    name: last | history (every day)
+    """
+    __tablename__ = "rr_balance_mon"
+
+    id:    Mapped[int] = mapped_column(primary_key=True)
+    value: Mapped[int] = mapped_column(nullable=False)
+    date:  Mapped[str] = mapped_column(nullable=False)
+    __table_args__ = (UniqueConstraint("date", name="rr_balance_mon_date_key"),)

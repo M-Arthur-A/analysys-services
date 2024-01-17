@@ -39,7 +39,7 @@
             <div style="display: flex;">
               <button onclick="rrMonQuery()" style="width: 240px; margin-right: 10px;">отправить запрос</button>
               <div>
-                <input style="width: 180px;" type="number" id="monitoring_intense" name="intense" min="2" max="24" placeholder="периодичность,ч."/>
+                <input style="width: 180px;" type="number" id="monitoring_intense" name="intense" min="12" max="24" placeholder="периодичность (>=24),ч."/>
                 <input style="width: 180px;" type="number" id="monitoring_duration" name="duration" min="1" max="1000" placeholder="продолжетильность,мес."/>
               </div>
             </div>
@@ -102,7 +102,7 @@
                   <td>{{ monitoring.start_at }}</td>
                   <td>{{ monitoring.end_at }}</td>
                   <td>{{ monitoring.interval }}</td>
-                  <td>{{ monitoring.status }}</td>
+                  <td><span title="{{ monitoring.status_txt }}">{{ monitoring.status }}</span></td>
                   <td>
                     <button onclick="rrCancelMon('{{ monitoring.cadastral }}')" style="font-size: 8px; padding: 4px;">❌</button>
                   </td>

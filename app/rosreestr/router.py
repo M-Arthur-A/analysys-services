@@ -15,7 +15,7 @@ from app.rosreestr.query.order.models import Orders
 from app.rosreestr.schemas import SOrders, SQuery, SReorder, SDownload, SSearch
 from app.rosreestr.monitoring.schemas import SOrderMon
 from app.rosreestr.utility import Utility
-from app.tasks.tasks import rr_adding, rr_adding_mon
+from app.tasks.tasks import rr_adding, rr_adding_mon, rr_monitoring_mon
 
 router = APIRouter(prefix="/rr",
                    tags=['Росреестр'])
@@ -109,8 +109,18 @@ async def add_mon(query: SOrderMon,
         user_id=current_user.id
     )
     # send task to celery
-    # rr_adding_mon.delay()
+    rr_adding_mon.delay()
+
+@router.post('/monitoringquerybyhand')
+async def add_mon_by_hand(current_user: Users = Depends(get_current_user)):
+    # send task to celery
+    rr_adding_mon.delay()
 
 @router.get('/monitors')
 async def get_monitorings(current_user: Users = Depends(get_current_user)) -> list[dict]:
     return await MonitoringsDAO.find_all(user_id=current_user.id)
+
+@router.get('/monitoringeventsbyhand')
+async def monitorings_events(current_user: Users = Depends(get_current_user)):
+    # send task to celery
+    rr_monitoring_mon.delay()

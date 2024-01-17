@@ -46,6 +46,10 @@ button:hover {
 }
 button img{
   filter: invert(50%);
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  pointer-events: none;
 }
 button:hover img{
   filter: invert(70%);

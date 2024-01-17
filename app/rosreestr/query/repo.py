@@ -10,7 +10,7 @@ from sqlalchemy.orm import lazyload
 
 from app.database import async_session_maker
 from app.repository.repo import BaseDAO
-from app.rosreestr.query.models import Balance, Queries
+from app.rosreestr.query.models import Balance, BalanceMon, Queries
 
 
 
@@ -34,11 +34,36 @@ class BalanceDAO(BaseDAO):
 
     @classmethod
     async def get_actual(cls):
-        query = select(Balance.value).order_by(Balance.id.desc())
+        query = select(cls.model.value).order_by(cls.model.id.desc())
         async with async_session_maker() as session:
             result = await session.execute(query)
             return result.scalars().first()
 
+
+class BalanceMonDAO(BaseDAO):
+    model = BalanceMon
+
+    @classmethod
+    async def add(cls, value: int):
+        data = {
+            "date": datetime.today().strftime("%Y-%m-%d"),
+            "value": value,
+        }
+        insertion = insert(cls.model).values(**data)
+        query = insertion.on_conflict_do_update(
+            constraint='rr_balance_mon_date_key',
+            set_=data
+        )
+        async with async_session_maker() as session:
+            await session.execute(query)
+            await session.commit()
+
+    @classmethod
+    async def get_actual(cls):
+        query = select(cls.model.value).order_by(cls.model.id.desc())
+        async with async_session_maker() as session:
+            result = await session.execute(query)
+            return result.scalars().first()
 
 
 class QueriesDAO(BaseDAO):

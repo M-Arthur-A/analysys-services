@@ -435,7 +435,7 @@ class Utility:
         query_id = await MonitoringsDAO.add(
             project=project,
             cadastral=cadastral,
-            monitoring_intense=query.monitoring_intense,
+            monitoring_intense=query.monitoring_intense if query.monitoring_intense >= 24 else 24,
             monitoring_duration=query.monitoring_duration,
             user_id=user_id
         )
@@ -444,11 +444,11 @@ class Utility:
 
 
     @classmethod
-    async def query_mon(cls):
+    async def query_monitorings(cls):
         """
         for celery
         """
-        orders = await OrdersDAO.find_all(status='New')
+        orders = await MonitoringsDAO.find_all(status='New')
         for order in orders if orders else ():
             result = await cls.session.start_monitor(
                 cadastral=order.cadastral,
@@ -456,12 +456,12 @@ class Utility:
                 end_date=order.end_at,
                 interval_h=order.interval
             )
-            await OrdersDAO.update(
+            await MonitoringsDAO.update(
                 item_id=order.id,
                 status=str(result['status']),
                 status_txt=str(result['status_txt']),
                 monitoringId=str(result['monitoring_id']),
-                modified_at=datetime.strptime(result['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ'),
+                modified_at=datetime.today(),
             )
 
 
@@ -470,7 +470,15 @@ class Utility:
         """
         for celery
         """
-        pass
+        after_event_id = await MonitoringsDAO.get_last_event_id()
+        last_event_id, events = await cls.session.check_monitor(after_event_id=after_event_id)
+        await MonitoringsDAO.update_last_event_id(last_event_id)
+        for event in events:
+            print(str(event))
+            # get_username
+            # message = f"{user['username'] if user else ''}, заказ <{project}> готов"
+            # await cls._telegram_send_to_channel(message)
+
 
     @classmethod
     async def check_balance(cls):
@@ -478,4 +486,5 @@ class Utility:
         for celery
         """
         balance = await cls.session.get_balance()
-        await BalanceDAO.add(balance)
+        await BalanceDAO.add(balance['orders'])
+        await BalanceMonDAO.add(balance['monitoring'])
