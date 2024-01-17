@@ -7,7 +7,7 @@
         <label class="tab-label" for="chck1" style="background: linear-gradient(45deg, #eee, #ffffff);">добавить</label>
         <div class="tab-content">
           <div class="info">
-            <h2>Заказ</h2>
+            <h2>Заказ выписок</h2>
             <div style="margin-bottom: 20px;">
               <label>Проект:</label>
               <input type="text" id="prj_name" placeholder="опционально (если не задать, присвоится автоматически)" style="height: 10px; width: 448px; margin: 10px 0px 10px 0px;">
@@ -33,18 +33,14 @@
           <div class="info">
             <h2>Постановка на мониторинг</h2>
             <div>
-              <input type="text"   id="monitoring_cadastral" placeholder="XX:XX:XXXXXXX:XX" style="height: 10px; width: 140px; margin: 0px 0px 10px 0px;">
+              <input type="text" id="monitoring_cadastral" placeholder="XX:XX:XXXXXXX:XX" style="height: 10px; width: 140px; margin: 0px 0px 10px 0px;">
               <input type="text" id="prj_name_mon" maxlength="20" placeholder="Проект - опционально" style="height: 10px; width: 350px; margin: 10px 0px 0px 0px;">
             </div>
             <div style="display: flex;">
-              <button onclick="rrMonQuery()" style="width: 240px; margin-right: 10px; padding: 5px 32px;">отправить запрос</button>
+              <button onclick="rrMonQuery()" style="width: 245px; height: 50px; margin-right: 10px; padding: 5px 32px;">отправить запрос</button>
               <div>
-                <input style="width: 180px;" type="number" id="monitoring_intense" name="intense" min="12" max="24" placeholder="периодичность (>=24),ч."/>
-                <input style="width: 180px;" type="number" id="monitoring_duration" name="duration" min="1" max="1000" placeholder="продолжетильность,мес."/>
-              </div>
-              <div>
-                <label>доступно</label>
-                <label>{{ balance_mon }} шт.</label>
+                <input style="width: 180px; height: 20px" type="number" id="monitoring_duration" name="duration" min="1" max="1000" placeholder="продолжетильность,мес."/>
+                <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; доступно {{ balance_mon }} проверок</span>
               </div>
             </div>
           </div>

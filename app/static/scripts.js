@@ -202,7 +202,6 @@ async function rrMonQuery() {
 
     const prj = document.getElementById("prj_name_mon").value;
     const mon_cadastral = document.getElementById("monitoring_cadastral").value;
-    const mon_intense = document.getElementById("monitoring_intense").value;
     const mon_duration = document.getElementById("monitoring_duration").value;
 
     await fetch(url, {
@@ -210,7 +209,7 @@ async function rrMonQuery() {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({project: prj, monitoring_cadastral: mon_cadastral, monitoring_intense: mon_intense, monitoring_duration: mon_duration}),
+        body: JSON.stringify({project: prj, monitoring_cadastral: mon_cadastral, monitoring_intense: 24, monitoring_duration: mon_duration}),
     }).then(response => {
         if (response.status === 200) {
             window.location.href = "/rr"
