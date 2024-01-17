@@ -16,7 +16,7 @@ from loguru import logger
 from fastapi import File
 import pandas as pd
 
-from app.rosreestr.query.repo import QueriesDAO, BalanceDAO
+from app.rosreestr.query.repo import QueriesDAO, BalanceDAO, BalanceMonDAO
 from app.rosreestr.query.order.repo import OrdersDAO
 from app.rosreestr.monitoring.repo import MonitoringsDAO
 from app.users.repo import UsersDAO
@@ -486,5 +486,7 @@ class Utility:
         for celery
         """
         balance = await cls.session.get_balance()
-        await BalanceDAO.add(balance['orders'])
-        await BalanceMonDAO.add(balance['monitoring'])
+        if 'orders' in balance.keys():
+            await BalanceDAO.add(balance['orders'])
+        if 'monitoring' in balance.keys():
+            await BalanceMonDAO.add(balance['monitoring'])
