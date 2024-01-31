@@ -26,6 +26,7 @@ h1 {
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
   transition: 0.3s;
   border-radius: 30px;
+  border-width: thin;
 }
 .content:hover {
   box-shadow: 0 8px 16px 0 rgba(0,0,0,0.4);
@@ -89,21 +90,33 @@ input[type=file] {
 }
 input[type=text] {
   border-radius: 12px;
+  border-width: thin;
   padding: 15px 5px;
   width: 259px;
+  background: linear-gradient(-45deg,rgba(0, 0, 0, 0) 48%,rgba(0, 0, 0, 0.2) 50%,rgba(0, 0, 0, 0) 52%);
+  background-size: 1em 1em;
 }
 input[type=password] {
   border-radius: 12px;
+  border-width: thin;
   padding: 15px 5px;
   width: 259px;
+  background: linear-gradient(-45deg,rgba(0, 0, 0, 0) 48%,rgba(0, 0, 0, 0.2) 50%,rgba(0, 0, 0, 0) 52%);
+  background-size: 1em 1em;
 }
 input[type=number] {
   border-radius: 12px;
+  border-width: thin;
   padding: 2px 5px 2px 5px;
+  background: linear-gradient(-45deg,rgba(0, 0, 0, 0) 48%,rgba(0, 0, 0, 0.2) 50%,rgba(0, 0, 0, 0) 52%);
+  background-size: 1em 1em;
 }
 textarea {
   border-radius: 12px;
+  border-width: thin;
   padding: 15px 5px;
+  background: linear-gradient(-45deg,rgba(0, 0, 0, 0) 48%,rgba(0, 0, 0, 0.05) 50%,rgba(0, 0, 0, 0) 52%);
+  background-size: 1em 1em;
 }
 code {
    background-color: #eee;
