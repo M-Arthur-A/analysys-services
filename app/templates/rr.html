@@ -32,15 +32,19 @@
           <hr>
           <div class="info">
             <h2>Постановка на мониторинг</h2>
-            <div>
-              <input type="text" id="monitoring_cadastral" placeholder="XX:XX:XXXXXXX:XX" style="height: 10px; width: 140px; margin: 0px 0px 10px 0px;">
-              <input type="text" id="prj_name_mon" maxlength="20" placeholder="Проект - опционально" style="height: 10px; width: 350px; margin: 10px 0px 0px 0px;">
-            </div>
             <div style="display: flex;">
-              <button onclick="rrMonQuery()" style="width: 245px; height: 50px; margin-right: 10px; padding: 5px 32px;">отправить запрос</button>
+              <textarea type="text" id="monitoring_cadastral" placeholder="кадастровые номера через <enter>" style="resize: none; height: 100px; width: 490px; margin: 5px 5px 10px 0px;"></textarea>
               <div>
-                <input style="width: 180px; height: 20px" type="number" id="monitoring_duration" name="duration" min="1" max="1000" placeholder="продолжетильность,мес."/>
-                <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; доступно {{ balance_mon }} проверок</span>
+                <input type="text" id="prj_name_mon" maxlength="20" placeholder="проект - опционально" style="height: 10px; width: 245px; margin: 6px 0px 5px 0px;">
+                <input style="width: 245px; height: 35px" type="number" id="monitoring_duration" name="duration" min="1" max="1000" placeholder="продолжетильность, мес."/>
+                <button onclick="document.getElementById('id01').style.display='block'" style="font-size: 20px; padding: 4px 12px 4px 12px; margin-top: 5px;">?</button>
+              </div>
+            </div>
+            <button onclick="rrMonQuery()" style="height: 50px; margin-right: 10px; padding: 5px 32px;">отправить запрос</button>
+            <span>доступно {{ balance_mon }} проверок</span>
+            <div id="id01" class="modal">
+              <div class="modal-content animate info" style="width: 400px; height: 300px;">
+                {% include mon_hint_page %}
               </div>
             </div>
           </div>

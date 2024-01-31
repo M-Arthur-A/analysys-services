@@ -429,18 +429,17 @@ class Utility:
 
 
     @classmethod
-    async def add_mon(cls, query: SOrderMon, user_id: int) -> int:
+    async def add_mon(cls, query: SOrderMon, user_id: int):
         project = cls.session.get_project(query.project)
-        cadastral = cls.session.cadastral_verify(query.monitoring_cadastral)
-        query_id = await MonitoringsDAO.add(
-            project=project,
-            cadastral=cadastral,
-            monitoring_intense=query.monitoring_intense if query.monitoring_intense >= 24 else 24,
-            monitoring_duration=query.monitoring_duration,
-            user_id=user_id
-        )
-        logger.info(f"rr.utility::{project}_{cadastral} добавлен в БД для мониторинга")
-        return query_id
+        for cadastral in query.monitoring_cadastral.split('\n'):
+            await MonitoringsDAO.add(
+                project=project,
+                cadastral=cls.session.cadastral_verify(cadastral),
+                monitoring_intense=query.monitoring_intense if query.monitoring_intense >= 24 else 24,
+                monitoring_duration=query.monitoring_duration,
+                user_id=user_id
+            )
+            logger.info(f"rr.utility::{project}_{cadastral} добавлен в БД для мониторинга")
 
 
     @classmethod

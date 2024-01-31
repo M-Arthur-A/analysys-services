@@ -41,6 +41,7 @@ async def rosreestr_page(
                                             "top_panel": "top_panel.html",
                                             "queries": queries,
                                             "monitorings": monitorings,
+                                            "mon_hint_page": "mon_hint.html",
                                             "balance": balance,
                                             "balance_mon": balance_mon,
                                             }
