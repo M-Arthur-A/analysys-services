@@ -20,9 +20,9 @@ celery.conf.beat_schedule = {
         'task': 'tasks.tasks.rr_monitoring',
         'schedule': 120.0,
     },
-    'rr_check_mon-every-two-min': {
+    'rr_check_mon-every-day': {
         'task': 'tasks.tasks.rr_monitoring_mon',
-        'schedule': 120.0,
+        'schedule': crontab(minute=0, hour=9),
     },
     'rr_check_balance-every-hour': {
         'task': 'tasks.tasks.rr_balance',
