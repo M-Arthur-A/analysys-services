@@ -2,7 +2,6 @@ from datetime import datetime
 from glob import glob as gb
 from zipfile import ZipFile
 from icecream import ic
-import asyncio
 import aiohttp
 import json
 import sys
@@ -11,7 +10,7 @@ import re
 import warnings
 warnings.filterwarnings('ignore')
 
-from typing import List
+from typing import List, Tuple
 from loguru import logger
 from fastapi import File
 import pandas as pd
@@ -55,6 +54,8 @@ class Utility:
         query_h = [('history', cad) for cad in query.query_h.split('\n')] if query.query_h else []
         for order in query_s + query_h:
             cadastral = cls.session.cadastral_verify(order[1])
+            if not cadastral:
+                continue
             cadastral_type = order[0]
             await OrdersDAO.add(
                 id=cls.session.get_uid(t='uid'),
@@ -432,9 +433,12 @@ class Utility:
     async def add_mon(cls, query: SOrderMon, user_id: int):
         project = cls.session.get_project(query.project)
         for cadastral in query.monitoring_cadastral.split('\n'):
+            cadastral = cls.session.cadastral_verify(cadastral)
+            if not cadastral:
+                continue
             await MonitoringsDAO.add(
                 project=project,
-                cadastral=cls.session.cadastral_verify(cadastral),
+                cadastral=cadastral,
                 monitoring_intense=query.monitoring_intense if query.monitoring_intense >= 24 else 24,
                 monitoring_duration=query.monitoring_duration,
                 user_id=user_id
@@ -473,10 +477,59 @@ class Utility:
         last_event_id, events = await cls.session.check_monitor(after_event_id=after_event_id)
         await MonitoringsDAO.update_last_event_id(last_event_id)
         for event in events:
-            print(str(event))
-            # get_username
-            # message = f"{user['username'] if user else ''}, заказ <{project}> готов"
-            # await cls._telegram_send_to_channel(message)
+            mon_mon_id = event['monitoringId']
+            date = event['eventDate']
+            state = event['state']
+            mon_id = await MonitoringsDAO.get_id_from_mon_id(mon_mon_id)
+            status_txt = ''
+            if mon_id:
+                if 'changes' in event.keys():
+                    item = await MonitoringsDAO.find_by_id(mon_id)
+                    if not item:
+                        continue
+                    user = await UsersDAO.find_by_id(model_id=item['user_id'])
+                    messages = cls._mon_changes_dict_to_str(event['changes'])
+                    message = f"{user['username'] if user else ''}, объект <{item['cadastral']}> проекта " + \
+                              f"<{item['project']}> изменился" + \
+                              ": " + messages[0] if messages[0] else "."
+                    status_txt = messages[1]
+                    await cls._telegram_send_to_channel(message)
+                await MonitoringsDAO.update(
+                    item_id=mon_id,
+                    status=state,
+                    status_txt=f"по состоянию на {date}" + status_txt
+                )
+
+
+    @classmethod
+    def _mon_changes_dict_to_str(cls, changes: dict) -> Tuple[str, str]:
+        message = ''
+        status_txt = ''
+        if 'oldValue' in changes.keys() and 'newValue' in changes.keys() and changes['oldValue'].keys() == changes['newValue'].keys():
+            for key, old_value in changes['oldValue'].items():
+                new_value = changes['newValue'][key]
+                if old_value != new_value:
+                    status_txt += f"\n- {key}: {str(old_value)} -> {str(new_value)}"
+                    if key == 'area':
+                        old_value = changes['oldValue'][key]['value']
+                        new_value = changes['newValue'][key]['value']
+                        message += f"\n- площадь изменилась с {str(old_value)} до {str(new_value)}."
+                    elif key == 'owners':
+                        message += f"\n- изменения в собственниках."
+                    elif key == 'encumbrances':
+                        message += f"\n- изменения в обременении."
+        else:
+            message = f""
+            status_txt = "\n" + str(changes)
+        return message, status_txt
+
+
+    @classmethod
+    async def del_monitoring(cls, cadastral):
+        mon_id, mon_mon_id = await MonitoringsDAO.get_all_id(cadastral)
+        await cls.session.stop_monitor(monitoringId=mon_mon_id)
+        if mon_id:
+            await MonitoringsDAO.delete(item_id=mon_id)
 
 
     @classmethod

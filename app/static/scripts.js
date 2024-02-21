@@ -202,7 +202,10 @@ async function rrMonQuery() {
 
     const prj = document.getElementById("prj_name_mon").value;
     const mon_cadastral = document.getElementById("monitoring_cadastral").value;
-    const mon_duration = document.getElementById("monitoring_duration").value;
+    var mon_duration = document.getElementById("monitoring_duration").value;
+    if (typeof mon_duration === 'string') {
+        mon_duration = 12;
+    }
 
     await fetch(url, {
         method: 'POST',
@@ -210,6 +213,19 @@ async function rrMonQuery() {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({project: prj, monitoring_cadastral: mon_cadastral, monitoring_intense: 24, monitoring_duration: mon_duration}),
+    }).then(response => {
+        if (response.status === 200) {
+            window.location.href = "/rr"
+        } else {}
+    });
+}
+
+async function rrCancelMon(cadastral) {
+    const url = origin + "/rr/monitoringdeletion"
+    const queryParams = "cadastral=" + cadastral;
+
+    await fetch(url.concat('?', queryParams), {
+        method: 'DELETE'
     }).then(response => {
         if (response.status === 200) {
             window.location.href = "/rr"

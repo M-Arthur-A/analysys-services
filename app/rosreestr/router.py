@@ -90,7 +90,7 @@ async def delete(query_id: int):
     return await QueriesDAO.delete(query_id=query_id)
 
 @router.get('/create')
-async def create_if_not():
+async def add_orders_by_hand():
     rr_adding.delay()
 
 @router.get('/balance')
@@ -120,11 +120,14 @@ async def add_mon_by_hand(current_user: Users = Depends(get_current_user)):
     # send task to celery
     rr_adding_mon.delay()
 
+@router.delete('/monitoringdeletion')
+async def del_mon(cadastral: str, current_user: Users = Depends(get_current_user)):
+    await Utility.del_monitoring(cadastral)
+
 @router.get('/monitors')
 async def get_monitorings(current_user: Users = Depends(get_current_user)) -> list[dict]:
     return await MonitoringsDAO.find_all(user_id=current_user.id)
 
 @router.get('/monitoringeventsbyhand')
 async def monitorings_events(current_user: Users = Depends(get_current_user)):
-    # send task to celery
-    rr_monitoring_mon.delay()
+    await Utility.check_monitorings()
