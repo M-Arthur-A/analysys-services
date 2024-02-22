@@ -40,6 +40,7 @@ async def rosreestr_page(
                                             "request": request,
                                             "top_panel": "top_panel.html",
                                             "queries": queries,
+                                            "kad_hint_page": "kad_hint.html",
                                             "monitorings": monitorings,
                                             "mon_hint_page": "mon_hint.html",
                                             "balance": balance,

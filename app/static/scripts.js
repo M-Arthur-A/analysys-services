@@ -1,11 +1,9 @@
-// Get the modal
-var modal = document.getElementById('id01');
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
-}
+// Hiding modals
+document.querySelectorAll(".modal").forEach(item => {
+  item.addEventListener("click", event => {
+    item.style.display = "none";
+  })
+});
 
 async function registerUser() {
     const wrongCredentialsSpan = document.getElementById("reg_wrong_credentials");
@@ -83,7 +81,7 @@ async function rrDownload(query_id, query_name) {
 }
 
 async function rrReorder(query_id) {
-const origin = window.location.origin
+    const origin = window.location.origin
     const url = origin + "/rr/reorder";
     var realy = window.confirm("Вы уверены, что хотите перезаказать все неготовые кадастровые номера?");
     if (realy) {

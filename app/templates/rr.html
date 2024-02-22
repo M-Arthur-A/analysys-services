@@ -7,43 +7,42 @@
         <label class="tab-label" for="chck1" style="background: linear-gradient(45deg, #eee, #ffffff);">добавить</label>
         <div class="tab-content">
           <div class="info">
-            <h2>Заказ выписок</h2>
-            <div style="margin-bottom: 20px;">
-              <label>Проект:</label>
-              <input type="text" id="prj_name" placeholder="опционально (если не задать, присвоится автоматически)" style="height: 10px; width: 448px; margin: 10px 0px 10px 0px;">
-            </div>
             <div style="display: flex;">
-              <div style="text-align: center;">
-                <div>
-                  <label>Простые выписки:</label>
-                </div>
-                <textarea type="text" id="query_s" placeholder="кадастровые номера через <enter>" style="resize: none; height: 100px; width: 245px; margin: 5px 5px 10px 0px;"></textarea>
-              </div>
-              <div style="text-align: center;">
-                <div>
-                  <label>Исторические выписки:</label>
-                </div>
-                <textarea type="text" id="query_h" placeholder="кадастровые номера через <enter>" style="resize: none; height: 100px; width: 245px; margin: 5px 0px 10px 0px;"></textarea>
-              </div>
+              <h2>Заказ выписок</h2>
+              <div style="width: 310px;"></div>
+              <button onclick="document.getElementById('id01').style.display='block'" style="font-size: 20px; padding: 4px 12px 4px 12px; margin-top: 5px; border-radius: 50px; height: 32px;">?</button>
+            </div>
+            <input type="text" id="prj_name" placeholder="проект - опционально" style="height: 10px; width: 505px; margin: 10px 0px 0px 0px;">
+            <div style="display: flex;">
+              <textarea type="text" id="query_s" placeholder="кадастровые номера через <enter> для заказа    ПРОСТЫХ    выписок" style="resize: none; height: 100px; width: 245px; margin: 5px 5px 10px 0px;"></textarea>
+              <textarea type="text" id="query_h" placeholder="кадастровые номера через <enter> для заказа  ИСТОРИЧЕСКИХ выписок" style="resize: none; height: 100px; width: 245px; margin: 5px 0px 10px 0px;"></textarea>
             </div>
             <button onclick="rrQuery()">отправить запрос</button>
             <span style="margin-left: 10px;">доступно {{ balance }} выписок</span>
+            <div id="id01" class="modal">
+              <div class="modal-content animate info" style="width: 400px;">
+                {% include kad_hint_page %}
+              </div>
+            </div>
           </div>
           <hr>
           <div class="info">
-            <h2>Постановка на мониторинг</h2>
+            <div style="display: flex;">
+              <h2>Постановка на мониторинг</h2>
+              <div style="width: 150px;"></div>
+              <button onclick="document.getElementById('id02').style.display='block'" style="font-size: 20px; padding: 4px 12px 4px 12px; margin-top: 5px; border-radius: 50px; height: 32px;">?</button>
+            </div>
             <div style="display: flex;">
               <textarea type="text" id="monitoring_cadastral" placeholder="кадастровые номера через <enter>" style="resize: none; height: 100px; width: 490px; margin: 5px 5px 10px 0px;"></textarea>
               <div>
                 <input type="text" id="prj_name_mon" maxlength="20" placeholder="проект - опционально" style="height: 10px; width: 245px; margin: 6px 0px 5px 0px;">
                 <input style="width: 245px; height: 35px" type="number" id="monitoring_duration" name="duration" min="1" max="1000" placeholder="продолжетильность, мес."/>
-                <button onclick="document.getElementById('id01').style.display='block'" style="font-size: 20px; padding: 4px 12px 4px 12px; margin-top: 5px;">?</button>
               </div>
             </div>
             <button onclick="rrMonQuery()" style="height: 50px; margin-right: 10px; padding: 5px 32px;">отправить запрос</button>
             <span>доступно {{ balance_mon }} проверок</span>
-            <div id="id01" class="modal">
-              <div class="modal-content animate info" style="width: 400px; height: 300px;">
+            <div id="id02" class="modal">
+              <div class="modal-content animate info" style="width: 400px;">
                 {% include mon_hint_page %}
               </div>
             </div>
