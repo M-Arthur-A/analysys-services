@@ -13,6 +13,7 @@
 }
 
 body {
+  margin: 0px;
   font-family: sans-serif;
   color: #5b5b5b;
   --red: #f76e6e;
@@ -175,6 +176,7 @@ hr {
 .topnav {
   background: linear-gradient(45deg, #eee, #ffffff);
   overflow: hidden;
+  margin: 10px;
   border-radius: 15px;
 }
 
