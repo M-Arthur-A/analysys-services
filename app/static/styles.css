@@ -13,8 +13,8 @@
 }
 
 body {
-  /* font-family: "siteFont", Monaco, Helvetica, sans-serif; */
-  font-family: Monaco, Helvetica, sans-serif;
+  font-family: sans-serif;
+  color: #5b5b5b;
   --red: #f76e6e;
   --yellow: #f7d564;
   --lime: #b3f76e;
@@ -52,8 +52,8 @@ h1 {
 }
 button {
   border-radius: 12px;
-  background-color: #eee;
-  color: black;
+  box-shadow: rgba(0, 0, 0, 0.15) 2px 2px 5px;
+  color: #5b5b5b;
   border: none;
   padding: 15px 32px;
   text-align: center;
@@ -83,11 +83,18 @@ button:active {
   opacity: 0.6;
   cursor: not-allowed;
 }
-input[type=submit] {
+input {
+  box-shadow: rgba(0, 0, 0, 0.06) 0px 0px 10px 2px inset;
   border-radius: 12px;
+  border-width: 0px;
+}
+input:hover {
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 10px 2px inset;
+  animation: move-it 2s linear infinite;
+}
+input[type=submit] {
   background-color: #eee;
   color: black;
-  border: none;
   padding: 15px 32px;
   text-align: center;
   text-decoration: none;
@@ -98,44 +105,41 @@ input[type=submit]:hover {
   color: gray;
 }
 input[type=file] {
-  border-radius: 12px;
   background-color: #eee;
   color: black;
-  border: none;
   padding: 15px 5px;
   text-align: left;
   text-decoration: none;
   width: 290px;
 }
 input[type=text] {
-  border-radius: 12px;
-  border-width: thin;
   padding: 15px 5px;
   width: 259px;
   background: linear-gradient(-45deg,rgba(0, 0, 0, 0) 48%,rgba(0, 0, 0, 0.2) 50%,rgba(0, 0, 0, 0) 52%);
   background-size: 1em 1em;
 }
 input[type=password] {
-  border-radius: 12px;
-  border-width: thin;
   padding: 15px 5px;
   width: 259px;
   background: linear-gradient(-45deg,rgba(0, 0, 0, 0) 48%,rgba(0, 0, 0, 0.2) 50%,rgba(0, 0, 0, 0) 52%);
   background-size: 1em 1em;
 }
 input[type=number] {
-  border-radius: 12px;
-  border-width: thin;
   padding: 2px 5px 2px 5px;
   background: linear-gradient(-45deg,rgba(0, 0, 0, 0) 48%,rgba(0, 0, 0, 0.2) 50%,rgba(0, 0, 0, 0) 52%);
   background-size: 1em 1em;
 }
 textarea {
   border-radius: 12px;
-  border-width: thin;
+  border-width: 0px;
+  box-shadow: rgba(0, 0, 0, 0.06) 0px 0px 10px 2px inset;
   padding: 15px 5px;
   background: linear-gradient(-45deg,rgba(0, 0, 0, 0) 48%,rgba(0, 0, 0, 0.05) 50%,rgba(0, 0, 0, 0) 52%);
   background-size: 1em 1em;
+}
+textarea:hover{
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 10px 2px inset;
+  animation: move-it 2s linear infinite;
 }
 code {
    background-color: #eee;
@@ -169,29 +173,29 @@ hr {
 
  /* Add a black background color to the top navigation */
 .topnav {
-    background: linear-gradient(45deg, #eee, #ffffff);
-    overflow: hidden;
-    border-radius: 15px;
+  background: linear-gradient(45deg, #eee, #ffffff);
+  overflow: hidden;
+  border-radius: 15px;
 }
 
 /* Style the links inside the navigation bar */
 .topnav a {
-    float: left;
-    display: block;
-    color: black;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-    font-size: 17px;
-    border-bottom: 3px solid transparent;
+  float: left;
+  display: block;
+  text-align: center;
+  color: #5b5b5b;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+  border-bottom: 3px solid transparent;
 }
 
 .topnav a:hover {
-    border-bottom: 3px solid red;
+  border-bottom: 3px solid red;
 }
 
 .topnav a.active {
-    border-bottom: 3px solid red;
+  border-bottom: 3px solid red;
 }
 .grow-wrap {
   /* easy way to plop the elements on top of each other and have them both sized based on the tallest one's height */
@@ -222,26 +226,26 @@ hr {
 }
  /* The Modal (background) */
 .modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    padding-top: 60px;
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  padding-top: 60px;
 }
 
 /* Modal Content Box */
 .modal-content {
-    background-color: #fefefe;
-    margin: 15px 15px;
-    width: 44%; /* Could be more or less, depending on screen size */
-    border-radius: 15px;
-    float: right;
+  background-color: #fefefe;
+  margin: 15px 15px;
+  width: 44%; /* Could be more or less, depending on screen size */
+  border-radius: 15px;
+  float: right;
 }
 
 /* Modal login Container */
@@ -251,18 +255,18 @@ hr {
  }
 /* Add Zoom Animation */
 .animate {
-    -webkit-animation: animatezoom 0.6s;
-    animation: animatezoom 0.6s
+  -webkit-animation: animatezoom 0.6s;
+  animation: animatezoom 0.6s
 }
 
 @-webkit-keyframes animatezoom {
-    from {-webkit-transform: scale(0)}
-    to {-webkit-transform: scale(1)}
+  from {-webkit-transform: scale(0)}
+  to {-webkit-transform: scale(1)}
 }
 
 @keyframes animatezoom {
-    from {transform: scale(0)}
-    to {transform: scale(1)}
+  from {transform: scale(0)}
+  to {transform: scale(1)}
 }
 
 /* ACCORDION SPOILERS */
@@ -402,5 +406,13 @@ table {
     --backdrop: #131313;
     --foreground: #ddd;
     --shadow: 0 0 20px 0 rgba(0, 0, 0, 0.3);
+  }
+}
+@keyframes move-it {
+  0% {
+    background-position: initial;
+  }
+  100% {
+    background-position: 100px 0px;
   }
 }
