@@ -140,10 +140,11 @@
           </button>
           <table style="margin-top: 15px; width:567px; table-layout: fixed;">
             <colgroup>
-              <col width="80px">
+              <col width="70px">
               <col width="20px">
               <col width="30px">
               <col width="30px">
+              <col width="10px">
             </colgroup>
             <thead>
               <tr>
@@ -151,6 +152,7 @@
                 <th>Тип</th>
                 <th>Дата</th>
                 <th>Статус</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -160,6 +162,9 @@
                 <td>{{ order.cadastral_type }}</td>
                 <td>{{ order.created_at }}</td>
                 <td><span title="{{ order.status_txt }}">{{ order.status }}</span></td>
+                <td>
+                  <button onclick="rrDelOrder('{{ order.id }}')" style="font-size: 8px; padding: 4px;">❌</button>
+                </td>
               </tr>
               {% endfor %}
             </tbody>

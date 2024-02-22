@@ -221,14 +221,33 @@ async function rrMonQuery() {
 }
 
 async function rrCancelMon(cadastral) {
-    const url = origin + "/rr/monitoringdeletion"
-    const queryParams = "cadastral=" + cadastral;
+    var assurance = confirm("Уверены? Отслеживание данного кадастра будет отменено!");
+    if (assurance) {
+        const url = origin + "/rr/monitoringdeletion"
+        const queryParams = "cadastral=" + cadastral;
 
-    await fetch(url.concat('?', queryParams), {
-        method: 'DELETE'
-    }).then(response => {
-        if (response.status === 200) {
-            window.location.href = "/rr"
-        } else {}
-    });
+        await fetch(url.concat('?', queryParams), {
+            method: 'DELETE'
+        }).then(response => {
+            if (response.status === 200) {
+                window.location.href = "/rr"
+            } else {}
+        });
+    }
+}
+
+async function rrDelOrder(orderId) {
+    var assurance = confirm("Уверены? Заказ и все результыты по нему будут удалены!");
+    if (assurance) {
+        const url = origin + "/rr/delorder"
+        const queryParams = "order_id=" + orderId;
+
+        await fetch(url.concat('?', queryParams), {
+            method: 'DELETE'
+        }).then(response => {
+            if (response.status === 200) {
+                window.location.href = "/rr"
+            } else {}
+        });
+    }
 }

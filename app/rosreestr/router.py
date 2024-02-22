@@ -9,6 +9,7 @@ from app.config import settings
 from app.users.models import Users
 from app.users.dependencies import get_current_user
 from app.rosreestr.query.models import Queries
+from app.rosreestr.query.order.repo import OrdersDAO
 from app.rosreestr.query.repo import BalanceDAO, BalanceMonDAO, QueriesDAO
 from app.rosreestr.monitoring.repo import MonitoringsDAO
 from app.rosreestr.query.order.models import Orders
@@ -86,8 +87,14 @@ async def find(query: SSearch) -> str:
     return await Utility.find(query=query.query)
 
 @router.delete('/del')
-async def delete(query_id: int):
+async def delete(query_id: int,
+                 current_user: Users = Depends(get_current_user)):
     return await QueriesDAO.delete(query_id=query_id)
+
+@router.delete('/delorder')
+async def delete_order(order_id: str,
+                       current_user: Users = Depends(get_current_user)):
+    return await OrdersDAO.delete(item_id=order_id)
 
 @router.get('/create')
 async def add_orders_by_hand():
