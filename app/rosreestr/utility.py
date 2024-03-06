@@ -476,6 +476,7 @@ class Utility:
         after_event_id = await MonitoringsDAO.get_last_event_id()
         last_event_id, events = await cls.session.check_monitor(after_event_id=after_event_id)
         await MonitoringsDAO.update_last_event_id(last_event_id)
+        logger.info(f"rr.utility_mon::произошло {len(events)} событий в рамках мониторинга")
         for event in events:
             mon_mon_id = event['monitoringId']
             date = event['eventDate']
@@ -494,6 +495,7 @@ class Utility:
                               ": " + messages[0] if messages[0] else "."
                     status_txt = messages[1]
                     await cls._telegram_send_to_channel(message)
+                    logger.info(f"rr.utility_mon::сообщение отправлено в TG по {item['project']} - {item['cadastral']}")
                 await MonitoringsDAO.update(
                     item_id=mon_id,
                     status=state,
