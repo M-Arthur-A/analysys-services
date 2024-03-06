@@ -346,8 +346,12 @@ class Utility:
                 for item in o_ind:  # по каждому объекту
                     print('|', end='')
                     shift = df.index[-1] - item[0] + 1 if not df.index.empty else 0  # сдвиг, если вставляем новые строчки
-                    df.loc[item[0]+shift, 'cadastral'] = df_h.loc[item[0], 'cadastral']
-                    df.loc[item[0]+shift, 'Выписка историческая'] = f'@ГИПЕРССЫЛКА("{df_h.loc[item[0], "cadastral"].replace(":","-")}_RealEstateOwnership.pdf";"историческая")'
+                    if 'cadastral' in df_h.columns:
+                        cad_col = 'cadastral'
+                    else:
+                        cad_col = 'order'
+                    df.loc[item[0]+shift, 'cadastral'] = df_h.loc[item[0], cad_col]
+                    df.loc[item[0]+shift, 'Выписка историческая'] = f'@ГИПЕРССЫЛКА("{df_h.loc[item[0], cad_col].replace(":","-")}_RealEstateOwnership.pdf";"историческая")'
                     df.loc[item[0]+shift, 'addressNotes'] = df_h.loc[item[0], 'addressNotes']
                     df.loc[item[0]+shift, 'estateType'] = df_h.loc[item[0], 'estateType']
                     #df.loc[item[0]+shift, 'area_value'] = df_h.loc[item[0], 'area_value']
@@ -364,8 +368,12 @@ class Utility:
                 logger.debug(f'Accumulating owners history data of <{project}> to dataset list is completed')
                 if not df_s.empty:
                     logger.debug(f'Simple data of <{project}> is adding to dataset list')
+                    if 'cadastral' in df_s.columns:
+                        cad_col = 'cadastral'
+                    else:
+                        cad_col = 'order'
                     # # Добавление в dataset данных простых выписок
-                    df_s['id'] = df_s['cadastral'] + df_s['owners_regNumber'].astype(str) + df_s['owners_name'].astype(str)
+                    df_s['id'] = df_s[cad_col] + df_s['owners_regNumber'].astype(str) + df_s['owners_name'].astype(str)
                     df['id'] = df['cadastral'] + df['owners_regNumber'].astype(str) + df['owners_name'].astype(str)
                     df['Выписка простая'] = df['Выписка историческая'].str.replace('Ownership', 'Info').replace('Историческая', 'Простая')
                     df_s.columns = [val if val != 'addressNotes' else 'Адрес' for val in df_s.columns.tolist()]
