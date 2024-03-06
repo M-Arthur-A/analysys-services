@@ -386,7 +386,9 @@ class Utility:
                         df_s['Обременение'] = "За " + \
                             df_s['encumbrances_pledge_name'].fillna('').astype(str) + " ("+ \
                             df_s['encumbrances_pledge_inn'].fillna('').astype(str) + ") по " + \
-                            df_s['encumbrances_document_content'].fillna('').astype(str)
+                            df_s['encumbrances_document_name'].fillna('').astype(str) + " от " + \
+                            df_s['encumbrances_document_issuerDate'].fillna('').astype(str)
+
                         df_s['Обременение'] = df_s['Обременение'].mask(df_s['Обременение'] == 'За  () по ')
                         d = pd.pivot_table(df_s[df_s['Обременение'].notnull()], index=['id'], values=['Обременение'], aggfunc=lambda x:list(x))
                         d['Обременение'] = d['Обременение'].astype(str)
