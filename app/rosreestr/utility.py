@@ -309,8 +309,10 @@ class Utility:
                 df_s = pd.concat([df_s, _df], axis=0, ignore_index=True)
 
         # убираем лишние префиксы из названий
-        df_s.columns = [col.replace('data_', '') for col in df_s.columns.to_list()]
-        df_h.columns = [col.replace('data_', '') for col in df_h.columns.to_list()]
+        df_s.columns = [col.replace('data_', '').replace('order', 'cadastral') \
+                        for col in df_s.columns.to_list()]
+        df_h.columns = [col.replace('data_', '').replace('order', 'cadastral') \
+                        for col in df_h.columns.to_list()]
 
         # сразу сохраняем исходные данные
         writer = pd.ExcelWriter(file_name + '.xlsx', engine='xlsxwriter')
