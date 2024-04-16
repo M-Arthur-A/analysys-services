@@ -499,11 +499,11 @@ class Utility:
                     user = await UsersDAO.find_by_id(model_id=item['user_id'])
                     messages = cls._mon_changes_dict_to_str(event['changes'])
                     message = f"{user['username'] if user else ''}, объект <{item['cadastral']}> проекта " + \
-                              f"<{item['project']}> изменился" + \
-                              ": " + messages[0] if messages[0] else "."
+                              f"<{item['tag']}> изменился" + \
+                              f": {messages[0] if messages[0] else 'изменения не отображены.'}"
                     status_txt = messages[1]
                     await cls._telegram_send_to_channel(message)
-                    logger.info(f"rr.utility_mon::сообщение отправлено в TG по {item['project']} - {item['cadastral']}")
+                    logger.info(f"rr.utility_mon::сообщение отправлено в TG по {item['tag']} - {item['cadastral']}")
                 await MonitoringsDAO.update(
                     item_id=mon_id,
                     status=state,
