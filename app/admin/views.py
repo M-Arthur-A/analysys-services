@@ -31,7 +31,7 @@ class OrdersAdmin(ModelView, model=Orders):
 
 
 class MonitoringsAdmin(ModelView, model=Monitorings):
-    column_list = [c.name for c in Orders.__table__.c] + [Orders.query]
+    column_list = [c.name for c in Monitorings.__table__.c]
     name = "Мониторинг"
     name_plural = "Мониторинги"
     icon = "fa-solid fa-newspaper"
