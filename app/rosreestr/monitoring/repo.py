@@ -43,14 +43,14 @@ class MonitoringsDAO(BaseDAO):
 
 
     @classmethod
-    async def get_last_event_id(cls) -> str:
+    async def get_last_event_id(cls) -> str | None:
         """
         select last_event_id from rr_monitors limit 1;
         """
         query = select(cls.model.last_event_id).limit(1)
         async with async_session_maker() as session:
             last_event_id = await session.execute(query)
-            return last_event_id.scalar_one()
+            return last_event_id.scalar_one() if last_event_id.first() else None
 
 
     @classmethod
@@ -69,6 +69,15 @@ class MonitoringsDAO(BaseDAO):
             sql_result = await session.execute(query)
             result = tuple(sql_result.tuples())
             return result[0] if result else (None, None)
+
+    @classmethod
+    async def get_count(cls) -> int:
+        query = select(func.count(cls.model.monitoringId))\
+            .filter(cls.model.monitoringId != None)
+        async with async_session_maker() as session:
+            sql_result = await session.execute(query)
+            result = await session.execute(query)
+            return result.scalar_one()
 
     @classmethod
     async def get_id_from_mon_id(cls, mon_id: str) -> int | None:

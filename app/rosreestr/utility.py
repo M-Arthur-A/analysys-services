@@ -482,7 +482,8 @@ class Utility:
         for celery
         """
         after_event_id = await MonitoringsDAO.get_last_event_id()
-        last_event_id, events = await cls.session.check_monitor(after_event_id=after_event_id)
+        count = await MonitoringsDAO.get_count()
+        last_event_id, events = await cls.session.check_monitor(count=count, after_event_id=after_event_id)
         await MonitoringsDAO.update_last_event_id(last_event_id)
         logger.info(f"rr.utility_mon::произошло {len(events)} событий в рамках мониторинга")
         for event in events:
