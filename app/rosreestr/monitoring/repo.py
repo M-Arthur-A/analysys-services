@@ -50,7 +50,7 @@ class MonitoringsDAO(BaseDAO):
         query = select(cls.model.last_event_id).limit(1)
         async with async_session_maker() as session:
             last_event_id = await session.execute(query)
-            return last_event_id.scalar_one() if last_event_id.first() else None
+            return last_event_id.scalar_one()
 
 
     @classmethod
