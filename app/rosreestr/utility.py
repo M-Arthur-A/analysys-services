@@ -490,6 +490,9 @@ class Utility:
             mon_mon_id = event['monitoringId']
             date = event['eventDate']
             state = event['state']
+            error = ''
+            if 'error' in event:
+                error = str(event['error'])
             mon_id = await MonitoringsDAO.get_id_from_mon_id(mon_mon_id)
             status_txt = ''
             if mon_id:
@@ -505,10 +508,14 @@ class Utility:
                     status_txt = messages[1]
                     await cls._telegram_send_to_channel(message)
                     logger.info(f"rr.utility_mon::сообщение отправлено в TG по {item['tag']} - {item['cadastral']}")
+                # update rr_monitors set status_date = CASE WHEN status_txt = '' then NULL else TO_DATE(SUBSTRING(status_txt, 17, 10), 'YYYY-MM-DD') end;
+                # update rr_monitors set status_txt = SUBSTRING(status_txt, 44, 1000);
                 await MonitoringsDAO.update(
                     item_id=mon_id,
                     status=state,
-                    status_txt=f"по состоянию на {date}" + status_txt
+                    error=error,
+                    status_date=date,
+                    status_txt=status_txt,
                 )
 
 
