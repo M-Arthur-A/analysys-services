@@ -514,7 +514,7 @@ class Utility:
                     item_id=mon_id,
                     status=state,
                     error=error,
-                    status_date=date,
+                    status_date=datetime.strptime(date, '%Y-%m-%dT%H:%M:%S.%fZ'),
                     status_txt=status_txt,
                 )
 
