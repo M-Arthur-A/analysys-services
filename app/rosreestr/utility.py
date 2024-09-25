@@ -14,6 +14,7 @@ from typing import List, Tuple
 from loguru import logger
 from fastapi import File
 import pandas as pd
+from dateutil import parser as date_parser
 
 from app.rosreestr.query.repo import QueriesDAO, BalanceDAO, BalanceMonDAO
 from app.rosreestr.query.order.repo import OrdersDAO
@@ -91,8 +92,10 @@ class Utility:
                 session_id=result['session_id'],
                 status=str(result['status']),
                 status_txt=str(result['status_txt']),
-                created_at=datetime.strptime(result['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ'),
-                modified_at=datetime.strptime(result['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ'),
+                created_at=date_parser.parse(result['created_at']),
+                modified_at=date_parser.parse(result['created_at'])
+                # created_at=datetime.strptime(result['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ'),
+                # modified_at=datetime.strptime(result['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ'),
             )
 
 
@@ -514,7 +517,8 @@ class Utility:
                     item_id=mon_id,
                     status=state,
                     error=error,
-                    status_date=datetime.strptime(date, '%Y-%m-%dT%H:%M:%S.%fZ'),
+                    status_date=date_parser.parse(date),
+                    # status_date=datetime.strptime(date, '%Y-%m-%dT%H:%M:%S.%fZ'),
                     status_txt=status_txt,
                 )
 
